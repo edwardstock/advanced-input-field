@@ -11,6 +11,10 @@ import java.util.regex.Pattern
 open class RegexValidator : BaseValidator {
     private val mPattern: String
 
+    init {
+        _errorMessage = "Invalid data format"
+    }
+
     constructor(pattern: String) {
         mPattern = pattern
     }
@@ -22,10 +26,10 @@ open class RegexValidator : BaseValidator {
     override fun validate(value: CharSequence?): Single<Boolean> {
         return Single.fromCallable(object : Callable<Boolean> {
             override fun call(): Boolean {
-                if (!isRequired && (value == null || value.isEmpty())) {
-                    return true
+                if (value == null) {
+                    return false
                 }
-                val result = value?.toString() ?: ""
+                val result = value.toString()
                 return result.matches(mPattern.toRegex())
             }
         })

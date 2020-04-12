@@ -7,25 +7,27 @@ import io.reactivex.Single
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 open class LengthValidator : BaseValidator {
-    private var mMin = -1
-    private var mMax = Int.MAX_VALUE
+    private val _min: Int
+    private val _max: Int
 
     constructor(min: Int) {
-        mMin = min
+        _min = min
+        _max = Int.MAX_VALUE
+        _errorMessage = "Minimum length: $_min"
     }
 
     constructor(min: Int, max: Int) {
-        mMin = min
-        mMax = max
+        _min = min
+        _max = max
+        _errorMessage = "Minimum length: $_min, maximum: $_max"
     }
 
     override fun validate(value: CharSequence?): Single<Boolean> {
-        return Single.fromCallable {
-            if (mMin == 0 && (value == null || value.isEmpty())) {
-                true
-            } else {
-                value != null && value.length >= mMin && value.length <= mMax
-            }
+        val res = if (_min == 0 && (value == null || value.isEmpty())) {
+            true
+        } else {
+            value != null && value.length >= _min && value.length <= _max
         }
+        return Single.just(res)
     }
 }

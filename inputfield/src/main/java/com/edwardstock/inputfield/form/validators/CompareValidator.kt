@@ -10,7 +10,7 @@ import io.reactivex.Single
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 open class CompareValidator : BaseValidator {
-    private var mComparable: LazyString? = null
+    private val mComparable: LazyString
 
     @JvmOverloads
     constructor(
@@ -57,12 +57,8 @@ open class CompareValidator : BaseValidator {
     }
 
     override fun validate(value: CharSequence?): Single<Boolean> {
-        return Single.just(
-            if (!isRequired && value.isNullOrEmpty()) {
-                true
-            } else {
-                value != null && mComparable?.invoke() != null && value.toString() == mComparable!!.invoke().toString()
-            }
-        )
+        val valid = mComparable()?.equals(value) ?: false
+
+        return Single.just(valid)
     }
 }

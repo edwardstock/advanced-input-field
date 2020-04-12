@@ -10,6 +10,10 @@ import io.reactivex.Single
 open class CustomValidator : BaseValidator {
     private val mValidator: Validator
 
+    init {
+        _errorMessage = "Values are not equals"
+    }
+
     constructor(validator: (CharSequence?) -> Boolean) {
         mValidator = object : Validator {
             override fun validate(oldValue: CharSequence?): Boolean {

@@ -1,6 +1,6 @@
 package com.edwardstock.inputfield.form.validators
 
-import android.util.Patterns
+import java.util.regex.Pattern
 
 /**
  * Advanced InputField. 2020
@@ -12,6 +12,11 @@ open class PhoneValidator : RegexValidator(PHONE_PATTERN) {
     }
 
     companion object {
-        private val PHONE_PATTERN = Patterns.PHONE
+        private val PHONE_PATTERN = Pattern.compile( // sdd = space, dot, or dash
+            "(\\+[0-9]+[\\- \\.]*)?" // +<digits><sdd>*
+                    + "(\\([0-9]+\\)[\\- \\.]*)?" // (<digits>)<sdd>*
+                    + "([0-9][0-9\\- \\.]+[0-9])"
+        ) // <digit><digit|sdd>+<digit>
+
     }
 }

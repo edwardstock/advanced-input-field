@@ -6,7 +6,11 @@ import io.reactivex.Single
  * Advanced InputField. 2020
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-open class EmptyValidator : BaseValidator() {
+open class EmptyValidator @JvmOverloads constructor(
+    errorMessage: CharSequence = "Value can't be empty",
+    required: Boolean = true
+) : BaseValidator(errorMessage, required) {
+
 
     override fun validate(value: CharSequence?): Single<Boolean> {
         return Single.just(

@@ -3,17 +3,22 @@ package com.edwardstock.inputfield.form
 import android.text.Spanned
 import android.text.method.DigitsKeyListener
 import android.widget.EditText
+import com.edwardstock.inputfield.InputField
 
 /**
  * Advanced InputField. 2020
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 class DecimalInputFilter(
-    private val mView: Lazy<EditText?>,
-    private val mDecimals: Int
+    private val comparable: () -> String,
+    private val decimals: Int = 18
 ) : DigitsKeyListener(false, true) {
 
-    constructor(txtView: Lazy<EditText?>) : this(txtView, 18)
+    constructor(input: EditText, decimals: Int = 18) :
+            this({ input.text?.toString() ?: "" }, decimals)
+
+    constructor(input: InputField, decimals: Int = 18) :
+            this({ input.text?.toString() ?: "" }, decimals)
 
     override fun filter(
         source: CharSequence,
@@ -23,7 +28,7 @@ class DecimalInputFilter(
         dstart: Int,
         dend: Int
     ): CharSequence {
-        val tmp: String = mView.value?.text.toString()
+        val tmp: String = comparable()
 
         if (source.length > 1) {
             return source.toString().replace("[^0-9\\.]".toRegex(), "")
@@ -45,7 +50,9 @@ class DecimalInputFilter(
             }
             return if (tmp.isNotEmpty() && (tmp[0] == '0' && dstart > 0 || tmp[0] != '0' && source == "0" && dstart == 0)) {
                 ""
-            } else source
+            } else {
+                source
+            }
         }
         if (ptIndex >= dstart) {
             if (tmp[0] == '.') {
@@ -56,12 +63,15 @@ class DecimalInputFilter(
             }
         } else if (ptIndex < dstart) {
             val decimals = tmp.substring(ptIndex + 1)
-            if (decimals.length >= mDecimals) {
+            if (decimals.length >= this.decimals) {
                 return ""
             }
         }
         return super.filter(source, start, end, dest, dstart, dend)
     }
 
+    interface InputGetter<out T> {
+        fun get(): T
+    }
 
 }

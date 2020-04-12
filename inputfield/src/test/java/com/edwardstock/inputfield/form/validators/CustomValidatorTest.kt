@@ -1,6 +1,8 @@
 package com.edwardstock.inputfield.form.validators
 
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
+
 
 /**
  * Advanced InputField. 2020
@@ -9,15 +11,43 @@ import org.junit.Test
 class CustomValidatorTest {
 
     @Test
-    fun testCustom() {
+    fun testSimple() {
+        val validator = CustomValidator {
+            it == "test string"
+        }.setErrorMessage("Bad ass")
 
-//        val validator = CustomValidator("Bad ass") { v ->
-//            v == "test string"
-//        }
-//
-//        assertTrue(validator("test string"))
-//        assertFalse(validator("test_string"))
-//        assertEquals("Bad ass", validator.errorMessage)
-//        assertTrue(validator.isRequired)
+        assertTrue(validator("test string").blockingGet())
+        assertFalse(validator("test_string").blockingGet())
+        assertEquals("Bad ass", validator.errorMessage)
+        assertTrue(validator.isRequired)
+    }
+
+    @Test
+    fun testUseInterface() {
+        val validator = CustomValidator(object : CustomValidator.Validator {
+            override fun validate(oldValue: CharSequence?): Boolean {
+                return oldValue == "test string"
+            }
+        }).apply {
+            errorMessage = "invalid"
+            isRequired = false
+        }
+
+        assertTrue(validator("test string").blockingGet())
+        assertFalse(validator("test_string").blockingGet())
+        assertEquals("invalid", validator.errorMessage)
+        assertFalse(validator.isRequired)
+    }
+
+    @Test
+    fun testStandardMessage() {
+        val validator = CustomValidator {
+            it == "test string"
+        }
+
+        assertTrue(validator("test string").blockingGet())
+        assertFalse(validator("test_string").blockingGet())
+        assertEquals("Values are not equals", validator.errorMessage)
+        assertTrue(validator.isRequired)
     }
 }
