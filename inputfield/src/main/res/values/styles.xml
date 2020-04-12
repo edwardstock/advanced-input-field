@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="InputField">
+        <item name="inputMinHeight">48dp</item>
+        <item name="android:textColorHint">@color/aif_grey</item>
+        <item name="inputBackground">@drawable/aif_edittext_states</item>
+        <item name="labelEnabled">true</item>
+        <item name="labelTextAppearance">@style/InputField.LabelTextAppearance</item>
+        <item name="errorTextAppearance">@style/InputField.ErrorTextAppearance</item>
+        <item name="inputTextAppearance">@style/InputField.InputTextAppearance</item>
+    </style>
+
+    <style name="InputField.InputTextAppearance" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">17sp</item>
+        <item name="android:textColor">@color/aif_text_color</item>
+    </style>
+
+    <style name="InputField.LabelTextAppearance" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">11sp</item>
+        <item name="android:textColor">@color/aif_grey</item>
+        <item name="colorControlNormal">@color/aif_grey</item>
+        <item name="colorControlActivated">@color/aif_grey</item>
+    </style>
+
+    <style name="InputField.ErrorTextAppearance" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/aif_error_color</item>
+    </style>
+
+</resources>

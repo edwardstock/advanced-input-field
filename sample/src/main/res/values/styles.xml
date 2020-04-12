@@ -1,0 +1,53 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="MyInputField" parent="InputField">
+        <item name="android:layout_marginTop">14dp</item>
+        <item name="labelTextAppearance">@style/MyLabelTextAppearance</item>
+        <item name="errorTextAppearance">@style/MyErrorTextAppearance</item>
+        <item name="inputStyle">@style/MyInputField.InputStyle</item>
+        <item name="inputTextAppearance">@style/MyInputInputTextAppearance</item>
+
+        <item name="suffixImageStyle">@style/MyInputImageSuffixStyle</item>
+    </style>
+
+    <style name="MyInputField.InputStyle">
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:digits">0,1,2,3,4,5,6,7,8,9,.,\,</item>
+        <item name="android:inputType">numberDecimal|textMultiLine</item>
+        <item name="android:background">@drawable/aif_edittext_states</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:singleLine">false</item>
+    </style>
+
+    <style name="MyInputImageSuffixStyle">
+        <item name="android:layout_width">32dp</item>
+        <item name="android:layout_height">32dp</item>
+        <item name="android:padding">4dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:layout_marginEnd">16dp</item>
+    </style>
+
+    <style name="MyInputInputTextAppearance">
+        <item name="android:fontFamily">@font/_inter_semi_bold</item>
+    </style>
+
+    <style name="MyErrorTextAppearance" parent="InputField.ErrorTextAppearance">
+        <item name="android:fontFamily">@font/_inter_semi_bold</item>
+    </style>
+
+    <style name="MyLabelTextAppearance" parent="InputField.LabelTextAppearance">
+        <item name="android:fontFamily">@font/_inter_semi_bold</item>
+
+    </style>
+
+
+</resources>
