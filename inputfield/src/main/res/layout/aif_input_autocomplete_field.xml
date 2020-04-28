@@ -43,7 +43,7 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Preview Label" />
 
-        <androidx.appcompat.widget.AppCompatEditText
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
             android:id="@+id/aif_input"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

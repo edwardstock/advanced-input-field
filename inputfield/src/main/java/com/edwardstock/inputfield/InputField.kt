@@ -1,3 +1,28 @@
+/*
+ * Copyright (C) by Eduard Maximovich. 2020
+ * @link <a href="https://github.com/edwardstock">Profile</a>
+ *
+ * The MIT License
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 package com.edwardstock.inputfield
 
 import android.annotation.SuppressLint
@@ -35,8 +60,13 @@ import com.airbnb.paris.annotations.StyleableChild
  * Advanced InputField. 2020
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
+@Suppress("LeakingThis")
 @Styleable("InputField")
-open class InputField : FrameLayout {
+open class InputField @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : FrameLayout(context, attrs, defStyleAttr) {
 
     @StyleableChild(R2.styleable.InputField_labelStyle)
     internal var mLabelText: TextView? = null
@@ -62,14 +92,33 @@ open class InputField : FrameLayout {
     internal var mInputTargetPadding: Rect? = null
     internal var mAutoVisibleError: Boolean = true
 
-    var fieldName: String?
-        get() = if (input.tag != null && input.tag is String) input.tag as String else null
+    init {
+        inflate(context, getLayoutId(), this)
+        mLabelText = findViewById(R.id.aif_label)
+        mErrorText = findViewById(R.id.aif_error)
+
+        com.edwardstock.inputfield.Paris.style(this).apply(attrs)
+    }
+
+    @LayoutRes
+    protected open fun getLayoutId(): Int {
+        return R.layout.aif_input_field
+    }
+
+    open var fieldName: String?
+        get() {
+            return if (input.tag != null) {
+                input.tag as String?
+            } else {
+                tag as String?
+            }
+        }
         @Attr(R2.styleable.InputField_fieldName)
         set(v) {
             input.tag = v
         }
 
-    var autoVisibleError: Boolean
+    open var autoVisibleError: Boolean
         get() = mAutoVisibleError
         set(v) {
             mAutoVisibleError = v
@@ -79,43 +128,28 @@ open class InputField : FrameLayout {
         None(-1),
         Text(0),
         Image(1);
-
-    }
-
-    constructor(context: Context) : super(context)
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
-        initialize(context, attrs, 0, 0)
-    }
-
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    ) {
-        initialize(context, attrs, defStyleAttr, 0)
-    }
-
-    constructor(
-        context: Context,
-        attrs: AttributeSet?,
-        defStyleAttr: Int,
-        defStyleRes: Int
-    ) : super(context, attrs, defStyleAttr, defStyleRes) {
-        initialize(context, attrs, defStyleAttr, defStyleRes)
     }
 
     @Attr(R2.styleable.InputField_android_enabled)
     override fun setEnabled(enabled: Boolean) {
-        mInput.isEnabled = enabled
+        input.isEnabled = enabled
     }
-
 
     @SuppressLint("ResourceType")
     @Attr(R2.styleable.InputField_inputOverlay)
-    fun setInputOverlay(@LayoutRes resId: Int) {
-        if (resId > 0) {
-            mInputOverlay.layoutResource = resId
+    open fun setInputOverlay(@LayoutRes layoutRes: Int) {
+        if (layoutRes > 0) {
+            mInputOverlay.layoutResource = layoutRes
             mOverlayView = mInputOverlay.inflate()
+        }
+    }
+
+    @SuppressLint("ResourceType")
+    open fun setInputOverlay(@LayoutRes layoutRes: Int, onInflatedView: (View) -> Unit) {
+        if (layoutRes > 0) {
+            mInputOverlay.layoutResource = layoutRes
+            mOverlayView = mInputOverlay.inflate()
+            onInflatedView(mOverlayView!!)
         }
     }
 
@@ -263,6 +297,18 @@ open class InputField : FrameLayout {
         mSuffixText.setOnClickListener(listener)
     }
 
+    override fun setOnClickListener(l: OnClickListener?) {
+        super.setOnClickListener(l)
+        input.setOnClickListener(l)
+        labelView?.setOnClickListener(l)
+        errorView?.setOnClickListener(l)
+    }
+
+    @Attr(R2.styleable.InputField_suffixTextAppearance)
+    fun setSuffixTextAppearance(@StyleRes resId: Int) {
+        TextViewCompat.setTextAppearance(mSuffixText, resId)
+    }
+
     @Attr(R2.styleable.InputField_labelTextAppearance)
     fun setLabelTextAppearance(@StyleRes resId: Int) {
         if (mLabelText == null) return
@@ -277,17 +323,17 @@ open class InputField : FrameLayout {
 
     @Attr(R2.styleable.InputField_inputTextAppearance)
     fun setInputTextAppearance(@StyleRes resId: Int) {
-        TextViewCompat.setTextAppearance(mInput, resId)
+        TextViewCompat.setTextAppearance(input, resId)
     }
 
     @Attr(R2.styleable.InputField_android_textColorHint)
     fun setHintTextColor(hintTextColor: Int) {
-        mInput.setHintTextColor(hintTextColor)
+        input.setHintTextColor(hintTextColor)
     }
 
     @Attr(R2.styleable.InputField_inputMinHeight)
     fun setInputMinHeight(@Px minHeight: Int) {
-        mInput.minHeight = minHeight
+        input.minHeight = minHeight
     }
 
     @SuppressLint("ResourceType")
@@ -295,7 +341,7 @@ open class InputField : FrameLayout {
     fun setInputMinHeightRes(@DimenRes resId: Int) {
         if (resId > 0) {
             val dimens: Int = resources.getDimension(resId).toInt()
-            mInput.minHeight = dimens
+            input.minHeight = dimens
         }
     }
 
@@ -305,27 +351,27 @@ open class InputField : FrameLayout {
 
     @Attr(R2.styleable.InputField_android_textColor)
     fun setTextColor(color: Int) {
-        mInput.setTextColor(color)
+        input.setTextColor(color)
     }
 
     fun setTextColor(color: ColorStateList) {
-        mInput.setTextColor(color)
+        input.setTextColor(color)
     }
 
     @Attr(R2.styleable.InputField_android_textSize)
     fun setTextSize(@Px textSize: Int) {
-        mInput.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize.toFloat())
+        input.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize.toFloat())
     }
 
     fun setTextSize(unit: Int, size: Float) {
-        mInput.setTextSize(unit, size)
+        input.setTextSize(unit, size)
     }
 
     @SuppressLint("ResourceType")
     @Attr(R2.styleable.InputField_android_textAllCaps)
     fun setTextAllCaps(@BoolRes resId: Int) {
         if (resId > 0) {
-            mInput.isAllCaps = resources.getBoolean(resId)
+            input.isAllCaps = resources.getBoolean(resId)
         }
     }
 
@@ -346,17 +392,17 @@ open class InputField : FrameLayout {
 
     @Attr(R2.styleable.InputField_android_singleLine)
     fun setSingleLine(singleLine: Boolean) {
-        mInput.isSingleLine = singleLine
+        input.isSingleLine = singleLine
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
     fun isSingleLine(): Boolean {
-        return mInput.isSingleLine
+        return input.isSingleLine
     }
 
     @Attr(R2.styleable.InputField_android_nextFocusDown)
     override fun setNextFocusDownId(@IdRes nextFocusDownId: Int) {
-        mInput.nextFocusDownId = nextFocusDownId
+        input.nextFocusDownId = nextFocusDownId
     }
 
     fun setLabelTextColor(color: Int) {
@@ -386,7 +432,7 @@ open class InputField : FrameLayout {
 
     @Attr(R2.styleable.InputField_inputBackground)
     fun setInputBackgroundRes(@DrawableRes res: Int) {
-        mInput.setBackgroundResource(res)
+        input.setBackgroundResource(res)
     }
 
     var inputBackground: Drawable?
@@ -421,7 +467,7 @@ open class InputField : FrameLayout {
 
     @Attr(R2.styleable.InputField_android_digits)
     fun setDigits(digits: String) {
-        mInput.keyListener = DigitsKeyListener.getInstance(digits)
+        input.keyListener = DigitsKeyListener.getInstance(digits)
     }
 
     open var label: CharSequence?
@@ -438,14 +484,18 @@ open class InputField : FrameLayout {
         }
 
     fun setText(text: CharSequence?, bufferType: TextView.BufferType) {
-        mInput.setText(text, bufferType)
+        input.setText(text, bufferType)
+    }
+
+    fun setText(@StringRes resId: Int) {
+        input.setText(resId)
     }
 
     @Attr(R2.styleable.InputField_android_text)
-    fun setText(text: CharSequence?) = mInput.setText(text, TextView.BufferType.EDITABLE)
+    fun setText(text: CharSequence?) = input.setText(text)
 
-    fun setSelection(index: Int) = mInput.setSelection(index)
-    fun setSelection(start: Int, stop: Int) = mInput.setSelection(start, stop)
+    fun setSelection(index: Int) = input.setSelection(index)
+    fun setSelection(start: Int, stop: Int) = input.setSelection(start, stop)
 
     var hint: CharSequence?
         get() = input.hint
@@ -455,6 +505,7 @@ open class InputField : FrameLayout {
         }
 
     var maxLength: Int
+        @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
         get() {
             val filters = input.filters
             for (f in filters) {
@@ -468,13 +519,13 @@ open class InputField : FrameLayout {
         set(v) {
             val filters = arrayOfNulls<InputFilter>(1)
             filters[0] = LengthFilter(v)
-            mInput.filters = filters
+            input.filters = filters
         }
 
     @RequiresApi(Build.VERSION_CODES.O)
     @Attr(R2.styleable.InputField_android_autofillHints)
     fun setAutofillHints(autofillHints: String) {
-        mInput.setAutofillHints(autofillHints)
+        input.setAutofillHints(autofillHints)
     }
 
     var errorEnabled: Boolean
@@ -492,10 +543,11 @@ open class InputField : FrameLayout {
         }
 
     fun setOnEditorActionListener(listener: TextView.OnEditorActionListener?) {
-        mInput.setOnEditorActionListener(listener)
+        input.setOnEditorActionListener(listener)
     }
 
-    val input: EditText
+
+    open val input: EditText
         get() = mInput
 
     var labelView: TextView?
@@ -529,9 +581,9 @@ open class InputField : FrameLayout {
         }
 
     var filters: Array<InputFilter>
-        get() = mInput.filters
+        get() = input.filters
         set(f) {
-            mInput.filters = f
+            input.filters = f
         }
 
     var error: CharSequence?
@@ -543,29 +595,12 @@ open class InputField : FrameLayout {
             }
 
             if (mErrorText != null) {
-                scrollView!!.postDelayed({
-                    scrollView!!.scrollDownTo(mErrorText!!)
-                }, 160)
+                scrollToInput()
             }
         }
 
     fun addTextChangedListener(textWatcher: TextWatcher) {
-        mInput.addTextChangedListener(textWatcher)
-    }
-
-    @Suppress("UNUSED_PARAMETER")
-    private fun initialize(
-        context: Context,
-        attrs: AttributeSet?,
-        defStyleAttr: Int,
-        defStyleRes: Int
-    ) {
-        inflate(context, R.layout.aif_input_field, this)
-
-        labelView = findViewById(R.id.aif_label)
-        errorView = findViewById(R.id.aif_error)
-
-        Paris.style(this).apply(attrs)
+        input.addTextChangedListener(textWatcher)
     }
 
     internal fun View.setMargin(@Px left: Int, @Px top: Int, @Px right: Int, @Px bottom: Int) {
@@ -622,10 +657,10 @@ open class InputField : FrameLayout {
         findParentOfType<ScrollView>() ?: findParentOfType<NestedScrollView>()
     }
 
-    private fun scrollIfNeeded() {
+    fun scrollToInput() {
         // Wait a bit (like 10 frames) for other UI changes to happen
         scrollView?.postDelayed({
-            scrollView?.scrollDownTo(this)
+            scrollView!!.scrollDownTo(mErrorText!!)
         }, 160)
     }
 
@@ -636,6 +671,7 @@ open class InputField : FrameLayout {
     private fun ViewGroup.scrollDownTo(descendant: View) {
         // Could use smoothScrollBy, but it sometimes over-scrolled a lot
         howFarDownIs(descendant)?.let {
+            if (it == 0) return@let
             when (this) {
                 is ScrollView -> {
                     this.smoothScrollBy(0, it)
