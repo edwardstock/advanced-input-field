@@ -40,15 +40,23 @@ open class RegexValidator : BaseValidator {
         _errorMessage = "Invalid data format"
     }
 
-    constructor(pattern: String) {
+    @JvmOverloads
+    constructor(pattern: String, isRequired: Boolean = true) {
         mPattern = pattern
+        _isRequired = isRequired
     }
 
-    constructor(pattern: Pattern) {
+    @JvmOverloads
+    constructor(pattern: Pattern, isRequired: Boolean = true) {
         mPattern = pattern.pattern()
+        _isRequired = isRequired
     }
 
     override fun validate(value: CharSequence?): Single<Boolean> {
+        if (!isRequired && value.isNullOrEmpty()) {
+            return Single.just(true)
+        }
+
         return Single.fromCallable(object : Callable<Boolean> {
             override fun call(): Boolean {
                 if (value == null) {

@@ -30,11 +30,14 @@ import android.os.Looper
 import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.TextView.OnEditorActionListener
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.OnLifecycleEvent
 import com.edwardstock.inputfield.InputField
 import com.edwardstock.inputfield.form.validators.BaseValidator
 import com.google.android.material.textfield.TextInputLayout
@@ -46,31 +49,32 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
-import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
-import kotlin.collections.ArrayList
 
 /**
  * Advanced InputField. 2020
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-open class InputGroup {
+open class InputGroup(
+    private val lifecycleOwner: LifecycleOwner? = null
+) : LifecycleObserver {
     protected val inputs: MutableMap<String, InputWrapper> = HashMap()
     protected val extErrorViews: MutableMap<String, TextView?> = HashMap()
-    protected val inputValidators: MutableMap<String, MutableList<BaseValidator>> = HashMap()
+    protected val inputValidators: MutableMap<String, MutableList<BaseValidator>> = ConcurrentHashMap()
     protected val textWatchers: MutableList<OnTextChangedListener> = ArrayList()
     protected val validFormListeners: MutableList<OnFormValidateListener> = ArrayList()
     protected val requiredInputs: MutableList<String> = ArrayList()
     protected val validateRelations: MutableMap<String, String> = HashMap(2)
     protected val validMap: MutableMap<String, Boolean> = HashMap()
     protected val disposables: CompositeDisposable = CompositeDisposable()
+
     protected val globalFormValidHandler: OnTextChangedListener = object : OnTextChangedListener {
         override fun onTextChanged(input: InputWrapper, valid: Boolean) {
             validMap[input.fieldName!!] = valid
 
             // Check one by one required inputs for validity
             requiredInputs.forEach {
-                Log.d("InputGroup", "Check for valid required field $it = ${validMap.safeGet(it, false)}")
                 // if one of is invalid, notify about it
                 if (!validMap.safeGet(it, false)) {
                     notifyFormValidListeners(false)
@@ -88,10 +92,6 @@ open class InputGroup {
                 }
             }
 
-            Log.d(
-                "InputGroup",
-                "Check for valid common field ${input.fieldName!!} = ${validMap.safeGet(input.fieldName!!, false)}"
-            )
             // if we reached this case, it means all required fields are valid, so check not required firstly modified
             if (!valid) {
                 notifyFormValidListeners(false)
@@ -107,10 +107,18 @@ open class InputGroup {
     private var handleInput = true
 
     init {
-        //todo: how to handle disposables?
+        @Suppress("LeakingThis")
+        lifecycleOwner?.lifecycle?.addObserver(this)
         inputFlow
             .debounce(200, TimeUnit.MILLISECONDS)
             .subscribe(::onInputFlow)
+            .handleDisposable()
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    internal fun onLifecycleStop() {
+        disposables.dispose()
+        disposables.clear()
     }
 
     class Builder(private val ig: InputGroup) {
@@ -141,8 +149,8 @@ open class InputGroup {
     }
 
     var clearErrorBeforeValidate: Boolean = false
-
     var enableInputDebounce: Boolean = true
+    var appendErrorOnValidation: Boolean = true
 
     fun addFormValidateListener(listener: (Boolean) -> Unit) {
         validFormListeners.add(object : OnFormValidateListener {
@@ -470,6 +478,48 @@ open class InputGroup {
         }
     }
 
+    fun addError(fieldName: String, message: CharSequence?) {
+        if (!inputs.hasValidKey(fieldName) || message == null) {
+            return
+        }
+
+        val input = getInput(fieldName)!!
+
+        when {
+            input.hasParentTextInputLayout -> {
+                val textInputLayout = input.parentTextInputLayout
+                textInputLayout.post {
+                    textInputLayout.isErrorEnabled = true
+                    var targetErr = textInputLayout.error?.toString() ?: ""
+                    if (targetErr.isNotEmpty()) {
+                        targetErr += "\n"
+                    }
+                    targetErr += message.toString()
+                    textInputLayout.error = targetErr
+                }
+            }
+            extErrorViews.hasValidKey(fieldName) -> {
+                val errorView = extErrorViews[fieldName]!!
+                errorView.post {
+                    if (errorView.text.isNotEmpty()) {
+                        errorView.append("\n")
+                    }
+                    errorView.append(message)
+                    errorView.visibility = View.VISIBLE
+                }
+            }
+            else -> {
+                input.post {
+                    if (input.error == null || input.error!!.isEmpty()) {
+                        input.error = message
+                    } else {
+                        input.error = "${input.error}\n${message}"
+                    }
+                }
+            }
+        }
+    }
+
     fun setError(fieldName: String?, message: CharSequence?) {
         if (!inputs.hasValidKey(fieldName)) {
             return
@@ -496,6 +546,9 @@ open class InputGroup {
             else -> {
                 input.post {
                     input.error = targetMessage
+                    if (targetMessage == null) {
+                        input.inputField.errorEnabled = false
+                    }
                 }
             }
         }
@@ -555,24 +608,44 @@ open class InputGroup {
         val input = getInput(fieldName)!!
         val originValue: CharSequence? = input.text
 
-        return Observable.fromIterable(inputValidators[fieldName]!!)
+        if (appendErrorOnValidation) {
+            setError(fieldName!!, null)
+        }
+
+        val validators = ArrayList(inputValidators[fieldName]!!)
+        return Observable.fromIterable(validators)
             .subscribeOn(validateScheduler)
             // make observables from list of field validators
             .flatMap { validator ->
                 validator.validate(originValue)
                     // convert valid bool value to 1, and invalid to 0, than we'll compare valid results with the validators
                     .map { valid ->
-                        if (withError) {
-                            setError(fieldName, if (valid) null else validator.errorMessage)
+                        if (withError && !valid) {
+
+                            if (appendErrorOnValidation && !valid) {
+                                addError(fieldName!!, validator.errorMessage)
+                            } else {
+                                setError(fieldName!!, if (valid) null else validator.errorMessage)
+                            }
                         }
-                        if (valid) 1 else 0
+
+                        if (valid || validator.isWarning) 1 else 0
                     }
                     .toObservable()
             }
             // count valid results
             .reduce { t1: Int, t2: Int -> t1 + t2 }
             // compare valid results with the number of validators
-            .map { it == inputValidators[fieldName]!!.size }
+            .map {
+                val countWarnings = inputValidators[fieldName]!!.filter { v -> v.isWarning }.count()
+                val res = it == inputValidators[fieldName]!!.size
+
+                // hide error only if no warnings and 100% validators are in valid state
+                if (res && countWarnings == 0) {
+                    setError(fieldName!!, null)
+                }
+                res
+            }
             .observeOn(AndroidSchedulers.mainThread())
             .toSingle()
     }

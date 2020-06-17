@@ -34,6 +34,8 @@ package com.edwardstock.inputfield
 class ExampleInstrumentedTest {
     //    @Test
     fun useAppContext() {
+
+//        assertEquals("", "")
         // Context of the app under test.
 //        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
 //        assertEquals("com.edwardstock.inputfield", appContext.packageName)

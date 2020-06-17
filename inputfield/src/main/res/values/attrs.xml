@@ -86,8 +86,6 @@
 
     <declare-styleable name="InputFieldAutocomplete">
         <attr name="android:dropDownAnchor" />
-        <!--        <attr name="android:dropDownHeight" />-->
-        <!--        <attr name="android:dropDownWidth" />-->
         <attr name="android:dropDownHorizontalOffset" />
         <attr name="android:dropDownVerticalOffset" />
     </declare-styleable>

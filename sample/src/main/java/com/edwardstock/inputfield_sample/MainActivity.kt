@@ -32,6 +32,7 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.edwardstock.inputfield.InputField
 import com.edwardstock.inputfield.InputFieldAutocomplete
+import com.edwardstock.inputfield.form.DecimalInputFilter
 import com.edwardstock.inputfield.form.InputGroup
 import com.edwardstock.inputfield.form.validators.CompareValidator
 import com.edwardstock.inputfield.form.validators.EmailValidator
@@ -51,7 +52,7 @@ class MainActivity : AppCompatActivity() {
         val name: InputFieldAutocomplete = findViewById(R.id.input_name)
         val password: InputField = findViewById(R.id.input_password)
         val passwordRepeat: InputField = findViewById(R.id.input_password_repeat)
-        val message: InputField = findViewById(R.id.input_message)
+        val amount: InputField = findViewById(R.id.input_message)
         val actionSubmit: Button = findViewById(R.id.action_submit)
         val actionReset: Button = findViewById(R.id.action_clear)
 
@@ -60,11 +61,9 @@ class MainActivity : AppCompatActivity() {
             add(email, EmailValidator())
             add(password, LengthValidator(4).apply { errorMessage = "Password length should be from 4 symbols" })
             add(passwordRepeat, CompareValidator(password).apply { errorMessage = "Passwords must be equals" })
-            add(message, CompareValidator("mx").apply {
-                errorMessage = "Message should be \"mx\""
-                isRequired = false
-            })
+            add(amount)
         }
+        inputGroup.addFilter(amount, DecimalInputFilter(amount))
 
         val nameAdapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1)
         nameAdapter.addAll(
@@ -102,20 +101,20 @@ class MainActivity : AppCompatActivity() {
 //            Log.d("Form", values.toString())
         }
 
-        message.setOnSuffixImageClickListener {
-            if (!message.text.isNullOrEmpty()) {
-                message.text = null
+        amount.setOnSuffixImageClickListener {
+            if (!amount.text.isNullOrEmpty()) {
+                amount.text = null
                 return@setOnSuffixImageClickListener
             }
-            message.inputOverlayVisible = true
+            amount.inputOverlayVisible = true
 
-            message.input.clearFocus()
-            message.textAllCaps
+            amount.input.clearFocus()
+            amount.textAllCaps
         }
 
-        message.inputOverlay?.setOnClickListener {
-            message.inputOverlayVisible = false
-            message.input.requestFocus()
+        amount.inputOverlay?.setOnClickListener {
+            amount.inputOverlayVisible = false
+            amount.input.requestFocus()
         }
 
 

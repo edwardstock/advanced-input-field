@@ -55,6 +55,7 @@
                 android:text="Hello World!"
                 android:textAlignment="center"
                 android:textSize="32sp"
+                android:visibility="gone"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -62,6 +63,7 @@
             <com.edwardstock.inputfield.InputField
                 android:id="@+id/input_email"
                 style="@style/MyInputField"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -75,11 +77,15 @@
             <com.edwardstock.inputfield.InputFieldAutocomplete
                 android:id="@+id/input_name"
                 style="@style/MyInputField"
+                android:enabled="false"
+                android:text="Wow"
+                android:textColor="@color/text_color_stateful"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
+                android:visibility="gone"
                 android:hint="Start type"
                 android:inputType="textPersonName"
                 app:fieldName="name"
@@ -88,6 +94,7 @@
             <com.edwardstock.inputfield.InputField
                 android:id="@+id/input_password"
                 style="@style/MyInputField"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -103,6 +110,10 @@
             <com.edwardstock.inputfield.InputField
                 android:id="@+id/input_password_repeat"
                 style="@style/MyInputField"
+                android:enabled="false"
+                android:text="atat"
+                android:textColor="@color/text_color_stateful"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -111,7 +122,11 @@
                 android:hint="Password"
                 android:inputType="textPassword"
                 app:fieldName="password_repeat"
-                app:label="Repeat your password" />
+                app:inputOverlay="@layout/test_overlay"
+                app:inputOverlayVisible="false"
+                app:label="Repeat your password"
+                app:suffixImageSrc="@drawable/ic_cancel_grey"
+                app:suffixType="image" />
 
             <com.edwardstock.inputfield.InputField
                 android:id="@+id/input_message"
@@ -121,17 +136,13 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                android:hint="Type some value "
+                android:hint="Type some decimal value"
                 android:inputType="numberDecimal|textMultiLine"
                 app:fieldName="message"
-                app:inputOverlay="@layout/test_overlay"
-                app:inputOverlayVisible="false"
-                app:label="@string/app_name"
+                app:label="Amount"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/hello"
-                app:suffixImageSrc="@drawable/ic_cancel_grey"
-                app:suffixType="image" />
+                app:layout_constraintTop_toBottomOf="@+id/hello" />
 
             <Button
                 android:id="@+id/action_submit"

@@ -38,7 +38,7 @@ import com.google.android.material.textfield.MaterialAutoCompleteTextView
  * @author Eduard Maximovich (edward.vstock@gmail.com)
  */
 @Styleable("InputFieldAutocomplete")
-class InputFieldAutocomplete @JvmOverloads constructor(
+open class InputFieldAutocomplete @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0

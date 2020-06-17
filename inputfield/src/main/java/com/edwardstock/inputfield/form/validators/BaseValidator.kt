@@ -36,7 +36,8 @@ internal typealias LazyString = () -> CharSequence?
 
 abstract class BaseValidator @kotlin.jvm.JvmOverloads constructor(
     protected var _errorMessage: CharSequence = "Incorrect data",
-    protected var _isRequired: Boolean = true
+    protected var _isRequired: Boolean = true,
+    protected var _isWarning: Boolean = false
 ) {
 
     open var errorMessage: CharSequence
@@ -49,6 +50,15 @@ abstract class BaseValidator @kotlin.jvm.JvmOverloads constructor(
         get() = _isRequired
         set(v) {
             _isRequired = v
+        }
+
+    /**
+     * This field used to run validation on field, but don't mark as error if value is not validated
+     */
+    open var isWarning: Boolean
+        get() = _isWarning
+        set(v) {
+            _isWarning = v
         }
 
     abstract fun validate(value: CharSequence?): Single<Boolean>

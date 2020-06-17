@@ -23,10 +23,26 @@
  * THE SOFTWARE.
  */
 
-package com.edwardstock.inputfield.form
+package com.edwardstock.inputfield_sample
+
+import android.os.Bundle
+import android.widget.EditText
+import androidx.appcompat.app.AppCompatActivity
+import com.edwardstock.inputfield.form.DecimalInputFilter
 
 /**
  * Advanced InputField. 2020
- * @author Eduard Maximovich (edward.vstock@gmail.com)
+ * @author Eduard Maximovich [edward.vstock@gmail.com]
  */
-class DecimalInputFilterTest
+class TestActivity : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_test)
+
+        val input = findViewById<EditText>(R.id.decimal)
+        input.filters = arrayOf(
+            DecimalInputFilter(input, 18)
+        )
+    }
+}

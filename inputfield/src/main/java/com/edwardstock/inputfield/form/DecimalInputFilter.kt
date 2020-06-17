@@ -34,7 +34,7 @@ import com.edwardstock.inputfield.InputField
  * Advanced InputField. 2020
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-class DecimalInputFilter(
+class DecimalInputFilter @JvmOverloads constructor(
     private val comparable: () -> String,
     private val decimals: Int = 18
 ) : DigitsKeyListener(false, true) {
@@ -47,6 +47,42 @@ class DecimalInputFilter(
     constructor(input: InputField, decimals: Int = 18) :
             this({ input.text?.toString() ?: "" }, decimals)
 
+    private fun filterInternal(current: String, source: String, start: Int, end: Int, dstart: Int, dend: Int): String {
+        var src = source
+        if (src == ",") {
+            src = "."
+        }
+
+        val dotIndex = current.indexOf(".")
+        val hasDot = dotIndex != -1
+
+
+        if (hasDot && (src == "." || src == ",")) {
+            return ""
+        }
+        if (current.isEmpty() && (src == "." || src == ",")) {
+            return "0."
+        }
+        if (hasDot) {
+            val decimals = current.substring(dotIndex + 1)
+            if (decimals.length >= this.decimals) {
+                return ""
+            }
+        }
+
+        if (current == "0") {
+            if (src != "." && src != "," && src != "") {
+                return ".$src"
+            }
+        }
+
+        if (src == "0" && current.isNotEmpty() && current[0] == '0' && dstart <= dotIndex) {
+            return ""
+        }
+
+        return src
+    }
+
     override fun filter(
         source: CharSequence?,
         start: Int,
@@ -55,50 +91,37 @@ class DecimalInputFilter(
         dstart: Int,
         dend: Int
     ): CharSequence? {
-        val tmp: String = comparable()
 
-        val sourceLen = source?.length ?: 0
-        val sourceSafe = source ?: ""
-
-        if (sourceLen > 1) {
-            return source.toString().replace("[^0-9\\.]".toRegex(), "")
+        if (source == null) {
+            return null
         }
 
+        val current: String = comparable()
 
-
-        when {
-            sourceLen > 1 -> return source.toString().replace("[^0-9\\.]".toRegex(), "")
-            source == "," -> return ""
-            source == "." && tmp.isEmpty() -> return "0."
-            tmp == "0" && source != "." -> return ""
-            source == "." && tmp.contains(".") -> return ""
+        var src = source.toString()
+        // if nothing is this is digits with dot or
+        val baseRegex = "^[0-9\\.\\,]+$".toRegex()
+        if (!src.matches(baseRegex)) {
+            src = src.replace("([^0-9\\.\\,])".toRegex(), "")
         }
 
-        val ptIndex = tmp.indexOf(".")
+        if (src.length > 1) {
+            val sb = StringBuilder()
+            var pos = 0
+            for (c in src) {
+                sb.append(
+                    filterInternal(
+                        sb.toString(),
+                        c.toString(),
+                        0, 1,
+                        pos, pos + 1
+                    )
+                )
+                pos++
+            }
+            return sb.toString()
+        }
 
-        if (ptIndex == -1) {
-            if (tmp == "0" && source == ".") {
-                return source
-            }
-            return if (tmp.isNotEmpty() && (tmp[0] == '0' && dstart > 0 || tmp[0] != '0' && source == "0" && dstart == 0)) {
-                ""
-            } else {
-                source
-            }
-        }
-        if (ptIndex >= dstart) {
-            if (tmp[0] == '.') {
-                return source
-            }
-            if (tmp[0] == '0' && dstart > 0 || tmp[0] != '0' && source == "0" && dstart == 0) {
-                return ""
-            }
-        } else if (ptIndex < dstart) {
-            val decimals = tmp.substring(ptIndex + 1)
-            if (decimals.length >= this.decimals) {
-                return ""
-            }
-        }
-        return super.filter(source, start, end, dest, dstart, dend)
+        return filterInternal(current, src, start, end, dstart, dend)
     }
 }

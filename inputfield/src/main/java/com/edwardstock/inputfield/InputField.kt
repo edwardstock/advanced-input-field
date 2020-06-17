@@ -40,7 +40,6 @@ import android.text.TextWatcher
 import android.text.method.DigitsKeyListener
 import android.text.method.PasswordTransformationMethod
 import android.util.AttributeSet
-import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.View.OnClickListener
@@ -50,6 +49,7 @@ import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.view.inputmethod.EditorInfo
 import android.widget.*
 import androidx.annotation.*
+import androidx.core.content.ContextCompat
 import androidx.core.widget.NestedScrollView
 import androidx.core.widget.TextViewCompat
 import com.airbnb.paris.annotations.Attr
@@ -61,6 +61,7 @@ import com.airbnb.paris.annotations.StyleableChild
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 @Suppress("LeakingThis")
+@SuppressLint("NonConstantResourceId")
 @Styleable("InputField")
 open class InputField @JvmOverloads constructor(
     context: Context,
@@ -132,7 +133,11 @@ open class InputField @JvmOverloads constructor(
 
     @Attr(R2.styleable.InputField_android_enabled)
     override fun setEnabled(enabled: Boolean) {
+        super.setEnabled(enabled)
         input.isEnabled = enabled
+        inputOverlay?.isEnabled = enabled
+        labelView?.isEnabled = enabled
+        errorView?.isEnabled = enabled
     }
 
     @SuppressLint("ResourceType")
@@ -227,7 +232,6 @@ open class InputField @JvmOverloads constructor(
 
     @Attr(R2.styleable.InputField_suffixImageTint)
     fun setSuffixImageTint(@ColorInt color: Int) {
-        Log.d("InputField", "Tint image with color ${java.lang.Long.toHexString((color.toLong()) and 0xFF_FFFFFFL)}")
         mSuffixImage.setColorFilter(color, PorterDuff.Mode.SRC_IN)
     }
 
@@ -350,12 +354,20 @@ open class InputField @JvmOverloads constructor(
         set(value) = input.setHintTextColor(value)
 
     @Attr(R2.styleable.InputField_android_textColor)
-    fun setTextColor(color: Int) {
+    fun setTextColor(@ColorInt color: Int) {
         input.setTextColor(color)
     }
 
-    fun setTextColor(color: ColorStateList) {
-        input.setTextColor(color)
+    @Attr(R2.styleable.InputField_android_textColor)
+    fun setTextColorRes(@ColorRes color: Int) {
+        if (color == 0) return
+
+        try {
+            input.setTextColor(ContextCompat.getColorStateList(context, color))
+        } catch (e: Throwable) {
+            input.setTextColor(ContextCompat.getColor(context, color))
+        }
+
     }
 
     @Attr(R2.styleable.InputField_android_textSize)
