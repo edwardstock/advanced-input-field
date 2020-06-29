@@ -37,6 +37,7 @@ import com.edwardstock.inputfield.form.InputGroup
 import com.edwardstock.inputfield.form.validators.CompareValidator
 import com.edwardstock.inputfield.form.validators.EmailValidator
 import com.edwardstock.inputfield.form.validators.LengthValidator
+import java.math.BigDecimal
 
 class MainActivity : AppCompatActivity() {
 
@@ -86,7 +87,7 @@ class MainActivity : AppCompatActivity() {
         inputGroup.addValidateRelation(passwordRepeat, password)
 
         actionReset.setOnClickListener {
-            inputGroup.reset()
+            amount.setText(BigDecimal.ZERO.toPlainString())
         }
 
         inputGroup.addFormValidateListener {

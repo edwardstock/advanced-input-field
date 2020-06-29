@@ -81,6 +81,7 @@
         <attr name="inputOverlayVisible" format="boolean" />
         <attr name="inputMinHeight" format="dimension" />
         <attr name="inputBackground" format="reference" />
+        <attr name="inputDisableSuggestions" format="boolean" />
 
     </declare-styleable>
 

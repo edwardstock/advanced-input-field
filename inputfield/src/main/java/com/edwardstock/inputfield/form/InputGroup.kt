@@ -151,6 +151,7 @@ open class InputGroup(
     var clearErrorBeforeValidate: Boolean = false
     var enableInputDebounce: Boolean = true
     var appendErrorOnValidation: Boolean = true
+    var enableAutoHideError: Boolean = false
 
     fun addFormValidateListener(listener: (Boolean) -> Unit) {
         validFormListeners.add(object : OnFormValidateListener {
@@ -460,6 +461,30 @@ open class InputGroup(
         clearErrors()
     }
 
+    fun hideErrors() {
+        inputs.forEach {
+            when {
+                it.value.hasParentTextInputLayout -> {
+                    val textInputLayout = it.value.parentTextInputLayout
+                    textInputLayout.isErrorEnabled = false
+                }
+                extErrorViews.hasValidKey(it.key) -> {
+                    val errorView = extErrorViews[it.key]!!
+                    errorView.post {
+                        errorView.visibility = View.GONE
+                    }
+                }
+                it.value.isInputField -> {
+                    it.value.post {
+                        it.value.inputField.errorEnabled = false
+                    }
+                }
+                else -> {
+                }
+            }
+        }
+    }
+
     fun clearErrors() {
         for ((key) in inputs) {
             setError(key, null)
@@ -489,9 +514,9 @@ open class InputGroup(
             input.hasParentTextInputLayout -> {
                 val textInputLayout = input.parentTextInputLayout
                 textInputLayout.post {
-                    textInputLayout.isErrorEnabled = true
                     var targetErr = textInputLayout.error?.toString() ?: ""
                     if (targetErr.isNotEmpty()) {
+                        textInputLayout.isErrorEnabled = true
                         targetErr += "\n"
                     }
                     targetErr += message.toString()
@@ -532,23 +557,29 @@ open class InputGroup(
             input.hasParentTextInputLayout -> {
                 val textInputLayout = input.parentTextInputLayout
                 textInputLayout.post {
-                    textInputLayout.isErrorEnabled = message != null
                     textInputLayout.error = targetMessage
+                    if (targetMessage != null && !textInputLayout.isErrorEnabled) {
+                        textInputLayout.isErrorEnabled = true
+                    }
                 }
             }
             extErrorViews.hasValidKey(fieldName) -> {
                 val errorView = extErrorViews[fieldName]!!
                 errorView.post {
                     errorView.text = targetMessage
-                    errorView.visibility = if (message != null) View.VISIBLE else View.GONE
+                    if (targetMessage != null && errorView.visibility != View.VISIBLE) {
+                        errorView.visibility = View.VISIBLE
+                    }
                 }
             }
             else -> {
                 input.post {
                     input.error = targetMessage
-                    if (targetMessage == null) {
-                        input.inputField.errorEnabled = false
-                    }
+//                    if(targetMessage != null) {
+//                        input.inputField.errorEnabled = true
+//                    } else if(enableAutoHideError) {
+//                        input.inputField.errorEnabled = false
+//                    }
                 }
             }
         }

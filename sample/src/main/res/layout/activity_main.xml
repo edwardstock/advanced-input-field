@@ -63,16 +63,15 @@
             <com.edwardstock.inputfield.InputField
                 android:id="@+id/input_email"
                 style="@style/MyInputField"
-                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                android:hint="Username"
-                android:inputType="textEmailAddress"
+                android:hint="Email"
+                android:inputType="textNoSuggestions"
                 app:fieldName="email"
-                app:label="Username" />
+                app:label="Email" />
 
             <com.edwardstock.inputfield.InputFieldAutocomplete
                 android:id="@+id/input_name"

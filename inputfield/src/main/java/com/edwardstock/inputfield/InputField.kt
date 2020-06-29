@@ -36,6 +36,7 @@ import android.os.Build
 import android.text.Editable
 import android.text.InputFilter
 import android.text.InputFilter.LengthFilter
+import android.text.InputType
 import android.text.TextWatcher
 import android.text.method.DigitsKeyListener
 import android.text.method.PasswordTransformationMethod
@@ -412,6 +413,16 @@ open class InputField @JvmOverloads constructor(
         return input.isSingleLine
     }
 
+    /**
+     * Hack to force disable keyboard suggestions and autocorrection
+     */
+    @Attr(R2.styleable.InputField_inputDisableSuggestions)
+    fun setInputDisableSuggestions(disable: Boolean) {
+        if (disable) {
+            input.inputType = InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+        }
+    }
+
     @Attr(R2.styleable.InputField_android_nextFocusDown)
     override fun setNextFocusDownId(@IdRes nextFocusDownId: Int) {
         input.nextFocusDownId = nextFocusDownId
@@ -602,17 +613,28 @@ open class InputField @JvmOverloads constructor(
         get() = mErrorText?.text
         set(text) {
             mErrorText?.text = text
-            if (mAutoVisibleError) {
-                errorEnabled = error != null
+            if (mAutoVisibleError && !errorEnabled && text != null) {
+                errorEnabled = true
             }
 
-            if (mErrorText != null) {
-                scrollToInput()
+            if (mErrorText != null && text != null) {
+                scrollToError()
             }
         }
 
     fun addTextChangedListener(textWatcher: TextWatcher) {
         input.addTextChangedListener(textWatcher)
+    }
+
+    fun addTextChangedSimpleListener(listener: (CharSequence?) -> Unit) {
+        input.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {}
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                listener(s)
+            }
+
+        })
     }
 
     internal fun View.setMargin(@Px left: Int, @Px top: Int, @Px right: Int, @Px bottom: Int) {
@@ -669,7 +691,7 @@ open class InputField @JvmOverloads constructor(
         findParentOfType<ScrollView>() ?: findParentOfType<NestedScrollView>()
     }
 
-    fun scrollToInput() {
+    fun scrollToError() {
         // Wait a bit (like 10 frames) for other UI changes to happen
         scrollView?.postDelayed({
             scrollView!!.scrollDownTo(mErrorText!!)

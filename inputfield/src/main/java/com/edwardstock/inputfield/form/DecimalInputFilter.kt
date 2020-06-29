@@ -63,14 +63,18 @@ class DecimalInputFilter @JvmOverloads constructor(
         if (current.isEmpty() && (src == "." || src == ",")) {
             return "0."
         }
+
         if (hasDot) {
             val decimals = current.substring(dotIndex + 1)
-            if (decimals.length >= this.decimals) {
+            if (decimals.length >= this.decimals && dstart > dotIndex) {
                 return ""
             }
         }
 
         if (current == "0") {
+            if (dstart == 0 && src == "0") {
+                return src
+            }
             if (src != "." && src != "," && src != "") {
                 return ".$src"
             }

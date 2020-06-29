@@ -68,7 +68,11 @@ class DecimalInputFilterTest {
             Pair("00.1111", "0.01111"),
             Pair(".", "0."),
             Pair("0", "0"),
+            Pair("0,", "0."),
+            Pair("0.,", "0."),
             Pair("06365", "0.6365"),
+            Pair("0.0006365", "0.0006365"),
+            Pair(".0006365", "0.0006365"),
             Pair("100", "100"),
             Pair("0", "0"),
             Pair("-100", "100"),
@@ -100,6 +104,7 @@ class DecimalInputFilterTest {
     fun testPastingDecimal() {
         activityRule.launchActivity(null)
         val testValues = mapOf(
+            Pair("30430.235935704609905627", "30430.235935704609905627"),
             Pair("100#100", "100100"),
             Pair("#131i414819", "131414819"),
             Pair("00000", "0.0000"),
@@ -107,6 +112,8 @@ class DecimalInputFilterTest {
             Pair("00.1111", "0.01111"),
             Pair(".", ""), //!!!!
             Pair("0", "0"),
+            Pair("0,", "0."),
+            Pair("0.,", "0."),
             Pair("06365", "0.6365"),
             Pair("100", "100"),
             Pair("-100", "100"),
