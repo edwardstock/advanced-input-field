@@ -25,6 +25,7 @@
 
 package com.edwardstock.inputfield_sample
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.ArrayAdapter
@@ -37,7 +38,6 @@ import com.edwardstock.inputfield.form.InputGroup
 import com.edwardstock.inputfield.form.validators.CompareValidator
 import com.edwardstock.inputfield.form.validators.EmailValidator
 import com.edwardstock.inputfield.form.validators.LengthValidator
-import java.math.BigDecimal
 
 class MainActivity : AppCompatActivity() {
 
@@ -55,7 +55,23 @@ class MainActivity : AppCompatActivity() {
         val passwordRepeat: InputField = findViewById(R.id.input_password_repeat)
         val amount: InputField = findViewById(R.id.input_message)
         val actionSubmit: Button = findViewById(R.id.action_submit)
-        val actionReset: Button = findViewById(R.id.action_clear)
+        val actionNoExtras: Button = findViewById(R.id.action_extras_empty)
+        val actionWithExtras: Button = findViewById(R.id.action_extras_filled)
+        val actionNetworkValidator: Button = findViewById(R.id.action_network_validator)
+
+        actionNetworkValidator.setOnClickListener {
+            startActivity(Intent(this, NetworkValidatorActivity::class.java))
+        }
+
+        actionNoExtras.setOnClickListener {
+            startActivity(Intent(this, ExtrasActivity::class.java))
+        }
+        actionWithExtras.setOnClickListener {
+            val intent = Intent(this, ExtrasActivity::class.java)
+            intent.putExtra("email", "abc@def.com")
+            intent.putExtra("value", "10")
+            startActivity(intent)
+        }
 
         inputGroup.setup {
             add(name)
@@ -85,10 +101,6 @@ class MainActivity : AppCompatActivity() {
 
 
         inputGroup.addValidateRelation(passwordRepeat, password)
-
-        actionReset.setOnClickListener {
-            amount.setText(BigDecimal.ZERO.toPlainString())
-        }
 
         inputGroup.addFormValidateListener {
             actionSubmit.isEnabled = it

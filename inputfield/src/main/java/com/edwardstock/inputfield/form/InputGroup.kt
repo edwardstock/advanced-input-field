@@ -41,6 +41,7 @@ import androidx.lifecycle.OnLifecycleEvent
 import com.edwardstock.inputfield.InputField
 import com.edwardstock.inputfield.form.validators.BaseValidator
 import com.google.android.material.textfield.TextInputLayout
+import io.reactivex.BackpressureStrategy
 import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.Single
@@ -48,7 +49,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.BehaviorSubject
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 
@@ -57,7 +58,7 @@ import java.util.concurrent.TimeUnit
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 open class InputGroup(
-    private val lifecycleOwner: LifecycleOwner? = null
+    lifecycleOwner: LifecycleOwner? = null
 ) : LifecycleObserver {
     protected val inputs: MutableMap<String, InputWrapper> = HashMap()
     protected val extErrorViews: MutableMap<String, TextView?> = HashMap()
@@ -68,6 +69,7 @@ open class InputGroup(
     protected val validateRelations: MutableMap<String, String> = HashMap(2)
     protected val validMap: MutableMap<String, Boolean> = HashMap()
     protected val disposables: CompositeDisposable = CompositeDisposable()
+    private val inputFlowMapLock = Any()
 
     protected val globalFormValidHandler: OnTextChangedListener = object : OnTextChangedListener {
         override fun onTextChanged(input: InputWrapper, valid: Boolean) {
@@ -102,17 +104,13 @@ open class InputGroup(
         }
     }
 
-    protected val inputFlow: PublishSubject<String> = PublishSubject.create()
+    protected val inputFlow: HashMap<String, BehaviorSubject<String>> = HashMap()
     protected var validateScheduler: Scheduler = Schedulers.io()
     private var handleInput = true
 
     init {
         @Suppress("LeakingThis")
         lifecycleOwner?.lifecycle?.addObserver(this)
-        inputFlow
-            .debounce(200, TimeUnit.MILLISECONDS)
-            .subscribe(::onInputFlow)
-            .handleDisposable()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
@@ -233,13 +231,19 @@ open class InputGroup(
         Handler(Looper.getMainLooper()).post { runnable() }
     }
 
+    private var latestValidatorDisposable = CompositeDisposable()
+
     fun onInputFlow(fieldName: String) {
         val input = inputs[fieldName]!!
 
+        // kill previously unfinished validator
+        latestValidatorDisposable.clear()
+
         if (textWatchers.isEmpty()) {
-            validate(fieldName, true).subscribe { valid ->
+            val d = validate(fieldName, true).subscribe { valid ->
                 postUiThread { globalFormValidHandler.onTextChanged(input, valid) }
-            }.handleDisposable()
+            }
+            latestValidatorDisposable.add(d)
             return
         }
 
@@ -258,17 +262,16 @@ open class InputGroup(
                     postUiThread {
                         globalFormValidHandler.onTextChanged(relatedInput, valid)
                     }
-
-//                            internalTextListener.onTextChanged(getInput(validateRelations[fieldName])!!, valid)
                 }
             }
             // validate source input
-            validate(fieldName, true).subscribe { valid ->
+            val d = validate(fieldName, true).subscribe { valid ->
                 // trigger textChanged
                 it.onTextChanged(input, valid)
 
                 postUiThread { globalFormValidHandler.onTextChanged(input, valid) }
             }
+            latestValidatorDisposable.add(d)
         }
     }
 
@@ -284,7 +287,17 @@ open class InputGroup(
                 if (!handleInput) return
 
                 if (enableInputDebounce) {
-                    inputFlow.onNext(fieldName)
+                    if (!inputFlow.containsKey(fieldName)) {
+                        synchronized(inputFlowMapLock) {
+                            inputFlow[fieldName] = BehaviorSubject.create<String>()
+                        }
+                        inputFlow[fieldName]!!
+                            .toFlowable(BackpressureStrategy.LATEST)
+                            .debounce(200, TimeUnit.MILLISECONDS)
+                            .subscribe(::onInputFlow)
+                            .handleDisposable()
+                    }
+                    inputFlow[fieldName]!!.onNext(fieldName)
                 } else {
                     onInputFlow(fieldName)
                 }
@@ -452,6 +465,7 @@ open class InputGroup(
 
     fun cancelValidation() {
         disposables.dispose()
+        inputFlow.clear()
     }
 
     fun reset() {

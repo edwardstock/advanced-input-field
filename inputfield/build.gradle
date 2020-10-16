@@ -33,7 +33,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: "de.mannodermaus.android-junit5"
 
-version = "0.0.1"
+version = "0.0.3"
 group = "com.edwardstock.android"
 
 ext {
@@ -41,7 +41,7 @@ ext {
     buildArtifactVersion = version
     buildArtifactGroup = group
 
-    pomName = "bip3x"
+    pomName = "advanced-input-field"
     pomUrl = "https://github.com/edwardstock/advanced-input-field"
     pomScm = {
         connection = "scm:git:git://github.com/edwardstock/advanced-input-field.git"
@@ -69,12 +69,12 @@ ext {
 }
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.3"
+    compileSdkVersion 30
+    buildToolsVersion "30.0.2"
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
         versionName version
 
@@ -138,10 +138,10 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'androidx.core:core-ktx:1.3.0'
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'com.google.android.material:material:1.3.0-alpha01'
+    implementation 'androidx.core:core-ktx:1.3.1'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
+    implementation 'com.google.android.material:material:1.3.0-alpha02'
 
     implementation 'com.annimon:stream:1.2.1'
     implementation 'com.airbnb.android:paris:1.4.0'
@@ -163,14 +163,14 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:2.25.0'
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
 
-    androidTestImplementation "androidx.test:runner:1.2.0"
+    androidTestImplementation "androidx.test:runner:1.3.0"
     androidTestImplementation "org.junit.jupiter:junit-jupiter-api:5.6.0"
     androidTestImplementation "de.mannodermaus.junit5:android-test-core:1.0.0"
     androidTestRuntimeOnly "de.mannodermaus.junit5:android-test-runner:1.0.0"
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     androidTestImplementation 'org.mockito:mockito-android:2.25.0'
-    androidTestImplementation 'androidx.test:rules:1.2.0'
+    androidTestImplementation 'androidx.test:rules:1.3.0'
 //    androidTestImplementation 'org.awaitility:awaitility:3.1.6'
 
 }

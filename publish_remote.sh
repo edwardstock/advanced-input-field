@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 #
 # Copyright (C) by Eduard Maximovich. 2020
 # @link <a href="https://github.com/edwardstock">Profile</a>
@@ -23,9 +25,4 @@
 # THE SOFTWARE.
 #
 
-#Thu Oct 08 18:25:10 MSK 2020
-distributionBase=GRADLE_USER_HOME
-distributionPath=wrapper/dists
-zipStoreBase=GRADLE_USER_HOME
-zipStorePath=wrapper/dists
-distributionUrl=https\://services.gradle.org/distributions/gradle-6.1.1-all.zip
+./scripts/publish.sh -f release -p inputfield -n input-field -t bintray
