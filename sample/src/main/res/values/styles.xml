@@ -75,5 +75,32 @@
 
     </style>
 
+    <style name="SampleSuffixStyle" parent="AppTheme">
+        <item name="android:textAllCaps">true</item>
+        <item name="android:layout_marginEnd">16dp</item>
+        <item name="suffixTextAppearance">@style/SampleSuffixTextAppearance</item>
+    </style>
+
+    <style name="SampleSuffixTextAppearance" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/_inter_semi_bold</item>
+        <item name="android:textSize">14dp</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+        <item name="android:clickable">false</item>
+        <item name="android:focusable">false</item>
+    </style>
+
+
+    <style name="SamplePreSuffixStyle" parent="AppTheme">
+        <item name="suffixTextAppearance">@style/SamplePreSuffixAppearance</item>
+    </style>
+
+    <style name="SamplePreSuffixAppearance" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/_inter_semi_bold</item>
+        <item name="android:textSize">14dp</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:clickable">false</item>
+        <item name="android:focusable">false</item>
+    </style>
+
 
 </resources>

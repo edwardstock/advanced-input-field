@@ -29,6 +29,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.postDelayed
 import com.edwardstock.inputfield.InputField
 import com.edwardstock.inputfield.form.InputGroup
 import com.edwardstock.inputfield.form.validators.DecimalValidator
@@ -41,15 +42,35 @@ import com.edwardstock.inputfield.form.validators.EmailValidator
 class ExtrasActivity : AppCompatActivity() {
     private lateinit var email: InputField
     private lateinit var value: InputField
+    private lateinit var presuffixed: InputField
     private lateinit var action: Button
     private val inputGroup = InputGroup()
+
+    enum class InputType(val sf: InputField.SuffixType) {
+        None(InputField.SuffixType.None),
+        PreSuffix(InputField.SuffixType.PreSuffix),
+        TextAndPreSuffix(InputField.SuffixType.TextAndPreSuffix),
+        ;
+    }
+
+    private var presuffixType: InputType = InputType.None
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_extras)
         email = findViewById(R.id.email)
         value = findViewById(R.id.value)
+        presuffixed = findViewById(R.id.presuffix_value)
         action = findViewById(R.id.action)
+
+        action.postDelayed(1000) {
+            presuffixed.setPreSuffixText("HUBABUBA01")
+            presuffixed.setPreSuffixText("HUBABUBA01")
+            presuffixed.setPreSuffixText("HUBABUBA01")
+            presuffixed.setSuffixType(presuffixType.sf)
+//        presuffixed.setSuffixType(InputField.SuffixType.Text)
+            presuffixed.setText("423444444444441444")
+        }
 
         inputGroup.addInput(email, value)
         inputGroup.addValidator(email, EmailValidator())
@@ -65,6 +86,11 @@ class ExtrasActivity : AppCompatActivity() {
         }
         if (intent.hasExtra("value")) {
             value.setText(intent.getStringExtra("value"))
+        }
+
+        action.setOnClickListener {
+            presuffixType = InputType.values()[(presuffixType.ordinal + 1) % InputType.values().size]
+            presuffixed.setSuffixType(presuffixType.sf)
         }
     }
 }

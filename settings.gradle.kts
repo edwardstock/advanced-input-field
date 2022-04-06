@@ -1,3 +1,2 @@
-include ':inputfield'
-include ':sample'
+include(":inputfield", ":sample")
 rootProject.name = "Advanced InputField"
