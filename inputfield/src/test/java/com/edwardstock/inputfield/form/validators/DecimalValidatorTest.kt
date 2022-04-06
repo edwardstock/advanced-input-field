@@ -37,15 +37,15 @@ class DecimalValidatorTest {
 
     @Test
     fun testSimple() {
-        val decList: List<String> = listOf(
+        val decimalList: List<String> = listOf(
             "100", "200", "200.524", "300,626", "1", "0", ".052"
         )
-        val invalidDecList: List<String> = listOf(
-            "", " ", "abc", "1e-5", "15e5", "\n"
+        val invalidDecimalList: List<String> = listOf(
+            /*"",*/" ", "abc", "1e-5", "15e5", "\n"
         )
 
         var validator = DecimalValidator().apply { errorMessage = "Invalid number" }
-        for (v in decList) {
+        for (v in decimalList) {
             assertTrue(validator(v).blockingGet())
             assertEquals("Invalid number", validator.errorMessage)
         }
@@ -55,7 +55,7 @@ class DecimalValidatorTest {
             errorMessage = "Is this a number?"
             isRequired = false
         }
-        for (v in invalidDecList) {
+        for (v in invalidDecimalList) {
             assertFalse(validator(v).blockingGet(), "Valid invalid number: \"$v\"")
             assertEquals("Is this a number?", validator.errorMessage)
             assertFalse(validator.isRequired)

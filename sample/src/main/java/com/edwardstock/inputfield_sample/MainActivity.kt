@@ -73,6 +73,11 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        val intent = Intent(this, ExtrasActivity::class.java)
+        intent.putExtra("email", "abc@def.com")
+        intent.putExtra("value", "10")
+        startActivity(intent)
+
         inputGroup.setup {
             add(name)
             add(email, EmailValidator())

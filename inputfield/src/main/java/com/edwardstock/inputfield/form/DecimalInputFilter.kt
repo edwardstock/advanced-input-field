@@ -28,26 +28,21 @@ package com.edwardstock.inputfield.form
 import android.text.Spanned
 import android.text.method.DigitsKeyListener
 import android.widget.EditText
+import androidx.annotation.RequiresApi
 import com.edwardstock.inputfield.InputField
+import java.util.*
 
 /**
  * Advanced InputField. 2020
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-class DecimalInputFilter @JvmOverloads constructor(
+private class DecimalInputFilterImpl @JvmOverloads constructor(
     private val comparable: () -> String,
     private val decimals: Int = 18
-) : DigitsKeyListener(false, true) {
-
-    @JvmOverloads
-    constructor(input: EditText, decimals: Int = 18) :
-            this({ input.text?.toString() ?: "" }, decimals)
-
-    @JvmOverloads
-    constructor(input: InputField, decimals: Int = 18) :
-            this({ input.text?.toString() ?: "" }, decimals)
-
-    private fun filterInternal(current: String, source: String, start: Int, end: Int, dstart: Int, dend: Int): String {
+) {
+    fun filterInternalImpl(
+        current: String, source: String, dstart: Int
+    ): String {
         var src = source
         if (src == ",") {
             src = "."
@@ -87,15 +82,10 @@ class DecimalInputFilter @JvmOverloads constructor(
         return src
     }
 
-    override fun filter(
+    fun filter(
         source: CharSequence?,
-        start: Int,
-        end: Int,
-        dest: Spanned?,
-        dstart: Int,
-        dend: Int
+        dstart: Int
     ): CharSequence? {
-
         if (source == null) {
             return null
         }
@@ -114,11 +104,10 @@ class DecimalInputFilter @JvmOverloads constructor(
             var pos = 0
             for (c in src) {
                 sb.append(
-                    filterInternal(
+                    filterInternalImpl(
                         sb.toString(),
                         c.toString(),
-                        0, 1,
-                        pos, pos + 1
+                        pos
                     )
                 )
                 pos++
@@ -126,6 +115,67 @@ class DecimalInputFilter @JvmOverloads constructor(
             return sb.toString()
         }
 
-        return filterInternal(current, src, start, end, dstart, dend)
+        return filterInternalImpl(current, src, dstart)
+    }
+}
+
+class DecimalInputFilter : DigitsKeyListener {
+    private val comparable: () -> String
+    private var decimals: Int = 18
+    private val impl: DecimalInputFilterImpl
+
+    @JvmOverloads
+    @Deprecated("Use constructor with Locale")
+    @Suppress("DEPRECATION")
+    constructor(
+        comparable: () -> String,
+        decimals: Int = 18
+    ) : super(false, true) {
+        this.comparable = comparable
+        this.decimals = decimals
+        impl = DecimalInputFilterImpl(comparable, decimals)
+    }
+
+    @JvmOverloads
+    @RequiresApi(26)
+    constructor(
+        locale: Locale,
+        comparable: () -> String,
+        decimals: Int = 18
+    ) : super(locale, false, true) {
+        this.comparable = comparable
+        this.decimals = decimals
+        impl = DecimalInputFilterImpl(comparable, decimals)
+    }
+
+    @JvmOverloads
+    @RequiresApi(26)
+    constructor(locale: Locale, input: EditText, decimals: Int = 18) :
+            this(locale, { input.text?.toString() ?: "" }, decimals)
+
+    @JvmOverloads
+    @RequiresApi(26)
+    constructor(locale: Locale, input: InputField, decimals: Int = 18) :
+            this(locale, { input.text?.toString() ?: "" }, decimals)
+
+    @JvmOverloads
+    @Suppress("DEPRECATION")
+    constructor(input: EditText, decimals: Int = 18) :
+            this({ input.text?.toString() ?: "" }, decimals)
+
+    @JvmOverloads
+    @Suppress("DEPRECATION")
+    constructor(input: InputField, decimals: Int = 18) :
+            this({ input.text?.toString() ?: "" }, decimals)
+
+    override fun filter(
+        source: CharSequence?,
+        start: Int,
+        end: Int,
+        dest: Spanned?,
+        dstart: Int,
+        dend: Int
+    ): CharSequence? {
+        return impl.filter(source, dstart)
     }
 }

@@ -80,10 +80,22 @@ open class InputField @JvmOverloads constructor(
 
     @StyleableChild(R2.styleable.InputField_inputStyle)
     internal val mInput: EditText by lazy { findViewById<EditText>(R.id.aif_input) }
+
+    /**
+     * This is a main root of suffixes
+     */
     internal val mSuffixRoot: ViewGroup by lazy { findViewById<ViewGroup>(R.id.aif_input_suffix_wrapper) }
+
+    /**
+     * This is a root of standard suffixes, excluding "presuffix"
+     */
+    internal val mSuffixLayout: ViewGroup by lazy { findViewById<ViewGroup>(R.id.aif_input_suffix_layout) }
 
     @StyleableChild(R2.styleable.InputField_suffixTextStyle)
     internal val mSuffixText: TextView by lazy { findViewById<TextView>(R.id.aif_input_suffix_text) }
+
+    @StyleableChild(R2.styleable.InputField_presuffixTextStyle)
+    internal val mPreSuffixText: TextView by lazy { findViewById<TextView>(R.id.aif_input_presuffix_text) }
 
     @StyleableChild(R2.styleable.InputField_suffixImageStyle)
     internal val mSuffixImage: ImageView by lazy { findViewById<ImageView>(R.id.aif_input_suffix_image) }
@@ -129,7 +141,11 @@ open class InputField @JvmOverloads constructor(
     enum class SuffixType(val value: Int) {
         None(-1),
         Text(0),
-        Image(1);
+        Image(1),
+        TextAndPreSuffix(2),
+        ImageAndPreSuffix(3),
+        PreSuffix(4),
+        ;
     }
 
     @Attr(R2.styleable.InputField_android_enabled)
@@ -241,48 +257,72 @@ open class InputField @JvmOverloads constructor(
         mSuffixText.text = text
     }
 
+    @Attr(R2.styleable.InputField_presuffixText)
+    fun setPreSuffixText(text: CharSequence?) {
+        mPreSuffixText.text = text
+    }
+
     fun setSuffixType(suffixType: SuffixType) {
         mSuffixType = suffixType
 
-        mInputSourcePadding = input.getPaddingRect()
+        if (mInputSourcePadding == null) {
+            mInputSourcePadding = input.getPaddingRect()
+        }
         mInputTargetPadding = input.getPaddingRect()
 
         when (mSuffixType) {
             SuffixType.Text -> {
-                mSuffixImage.visibility = View.GONE
-                mSuffixRoot.visibility = View.VISIBLE
+                mSuffixLayout.visibility = View.VISIBLE
                 mSuffixText.visibility = View.VISIBLE
-                waitInflatingAndSetPadding(mSuffixRoot)
+                mSuffixImage.visibility = View.GONE
+                mPreSuffixText.visibility = View.GONE
             }
             SuffixType.Image -> {
+                mSuffixLayout.visibility = View.VISIBLE
                 mSuffixText.visibility = View.GONE
-                mSuffixRoot.visibility = View.VISIBLE
                 mSuffixImage.visibility = View.VISIBLE
-                waitInflatingAndSetPadding(mSuffixRoot)
+                mPreSuffixText.visibility = View.GONE
             }
-            else -> {
-                mSuffixRoot.visibility = View.GONE
+            SuffixType.TextAndPreSuffix -> {
+                mSuffixLayout.visibility = View.VISIBLE
+                mSuffixText.visibility = View.VISIBLE
+                mSuffixImage.visibility = View.GONE
+                mPreSuffixText.visibility = View.VISIBLE
+            }
+            SuffixType.ImageAndPreSuffix -> {
+                mSuffixLayout.visibility = View.VISIBLE
+                mSuffixText.visibility = View.GONE
+                mSuffixImage.visibility = View.VISIBLE
+                mPreSuffixText.visibility = View.VISIBLE
+            }
+            SuffixType.PreSuffix -> {
+                mSuffixLayout.visibility = View.VISIBLE
                 mSuffixText.visibility = View.GONE
                 mSuffixImage.visibility = View.GONE
-                input.setPadding(mInputSourcePadding)
+                mPreSuffixText.visibility = View.VISIBLE
+            }
+            else -> {
+                mSuffixLayout.visibility = View.GONE
+                mSuffixText.visibility = View.GONE
+                mSuffixImage.visibility = View.GONE
+                mPreSuffixText.visibility = View.GONE
             }
         }
+        waitInflatingAndSetPadding(mSuffixRoot)
     }
 
     private fun waitInflatingAndSetPadding(view: ViewGroup) {
-        if (view.width == 0) {
+        if (mSuffixType != SuffixType.None) {
             view.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
                 override fun onGlobalLayout() {
-                    mInputTargetPadding = mInputSourcePadding
+                    mInputTargetPadding = Rect(mInputSourcePadding!!)
                     mInputTargetPadding!!.right += view.width
                     input.setPadding(mInputTargetPadding)
                     view.viewTreeObserver.removeOnGlobalLayoutListener(this)
                 }
             })
         } else {
-            mInputTargetPadding = mInputSourcePadding
-            mInputTargetPadding!!.right -= view.width
-            input.setPadding(mInputTargetPadding)
+            input.setPadding(mInputSourcePadding)
         }
     }
 
@@ -312,6 +352,11 @@ open class InputField @JvmOverloads constructor(
     @Attr(R2.styleable.InputField_suffixTextAppearance)
     fun setSuffixTextAppearance(@StyleRes resId: Int) {
         TextViewCompat.setTextAppearance(mSuffixText, resId)
+    }
+
+    @Attr(R2.styleable.InputField_presuffixTextAppearance)
+    fun setPreSuffixTextAppearance(@StyleRes resId: Int) {
+        TextViewCompat.setTextAppearance(mPreSuffixText, resId)
     }
 
     @Attr(R2.styleable.InputField_labelTextAppearance)
@@ -569,9 +614,21 @@ open class InputField @JvmOverloads constructor(
         input.setOnEditorActionListener(listener)
     }
 
-
     open val input: EditText
         get() = mInput
+
+    open val suffixRoot: ViewGroup
+        get() = mSuffixLayout
+
+    open val suffixImage: ImageView
+        get() = mSuffixImage
+
+    open val suffixText: TextView
+        get() = mSuffixText
+
+    open val preSuffixText: TextView
+        get() = mPreSuffixText
+
 
     var labelView: TextView?
         get() = mLabelText

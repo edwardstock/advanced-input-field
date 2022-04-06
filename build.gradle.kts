@@ -23,36 +23,32 @@
  * THE SOFTWARE.
  */
 
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+extra["kotlin_version"] = "1.6.10"
+
 buildscript {
-    ext.kotlin_version = "1.3.72"
     repositories {
+        mavenLocal()
         google()
-        jcenter()
         mavenCentral()
+        gradlePluginPortal()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.1'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.jakewharton:butterknife-gradle-plugin:10.2.1'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5'
-        classpath "de.mannodermaus.gradle.plugins:android-junit5:1.6.0.0"
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        classpath("com.android.tools.build:gradle:7.1.2")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
+        classpath("com.jakewharton:butterknife-gradle-plugin:10.2.3")
     }
 }
 
 allprojects {
     repositories {
-        google()
-        jcenter()
-        mavenCentral()
         mavenLocal()
-        maven { url 'https://jitpack.io' }
+        mavenCentral()
+        google()
+        maven(url = uri("https://clojars.org/repo/"))
+        maven(url = uri("https://oss.sonatype.org/content/repositories/snapshots/"))
+        maven(url = uri("https://jitpack.io"))
+        maven(url = uri("https://oss.jfrog.org/libs-snapshot/"))
+        maven(url = uri("https://oss.jfrog.org/artifactory/oss-snapshot-local/"))
+        maven(url = uri("https://minter.jfrog.io/artifactory/android/"))
     }
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
 }

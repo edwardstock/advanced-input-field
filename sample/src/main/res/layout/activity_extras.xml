@@ -69,6 +69,29 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/email" />
 
+    <com.edwardstock.inputfield.InputField
+        android:id="@+id/presuffix_value"
+        style="@style/MyInputField"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="Type amount"
+        android:inputType="numberDecimal|textMultiLine"
+        app:fieldName="presuffix"
+        app:label="Pre-Suffixed value"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/value"
+        app:presuffixTextAppearance="@style/SamplePreSuffixAppearance"
+        app:presuffixTextStyle="@style/SamplePreSuffixStyle"
+        app:suffixText="USE MAX"
+        app:suffixTextAppearance="@style/SampleSuffixTextAppearance"
+        app:suffixTextStyle="@style/SampleSuffixStyle"
+        app:suffixType="presuffix" />
+
     <Button
         android:id="@+id/action"
         android:layout_width="0dp"
@@ -80,6 +103,6 @@
         android:text="Submit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/value" />
+        app:layout_constraintTop_toBottomOf="@id/presuffix_value" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

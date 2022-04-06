@@ -27,7 +27,6 @@ package com.edwardstock.inputfield_sample
 
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.edwardstock.inputfield.InputField
 import com.edwardstock.inputfield.form.InputGroup
@@ -71,7 +70,7 @@ class NetworkValidatorActivity : AppCompatActivity() {
         val inputGroup = InputGroup()
 
         val input: InputField = findViewById(R.id.input_email)
-        val action: Button = findViewById(R.id.action_submit)
+//        val action: Button = findViewById(R.id.action_submit)
 
 
         inputGroup.addInput(input)

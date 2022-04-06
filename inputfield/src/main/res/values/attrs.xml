@@ -50,8 +50,12 @@
         <attr name="android:singleLine" />
 
         <attr name="suffixType" format="enum">
+            <enum name="none" value="-1" />
             <enum name="text" value="0" />
             <enum name="image" value="1" />
+            <enum name="text_and_presuffix" value="2" />
+            <enum name="image_and_presuffix" value="3" />
+            <enum name="presuffix" value="4" />
         </attr>
         <attr name="suffixImageStyle" format="reference" />
         <attr name="suffixImageSrc" format="reference" />
@@ -61,9 +65,13 @@
         <attr name="suffixImageMargin" format="dimension" />
         <attr name="suffixImageTint" format="color" />
 
-        <attr name="suffixText" format="string" />
+        <attr name="suffixText" format="string|reference" />
         <attr name="suffixTextStyle" format="reference" />
         <attr name="suffixTextAppearance" format="reference" />
+
+        <attr name="presuffixText" format="string|reference" />
+        <attr name="presuffixTextStyle" format="reference" />
+        <attr name="presuffixTextAppearance" format="reference" />
 
         <attr name="label" format="string" />
         <attr name="labelEnabled" format="boolean" />
