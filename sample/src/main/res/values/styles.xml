@@ -1,28 +1,3 @@
-<!--
-  ~ Copyright (C) by Eduard Maximovich. 2020
-  ~ @link <a href="https://github.com/edwardstock">Profile</a>
-  ~
-  ~ The MIT License
-  ~
-  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
-  ~ of this software and associated documentation files (the "Software"), to deal
-  ~ in the Software without restriction, including without limitation the rights
-  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-  ~ copies of the Software, and to permit persons to whom the Software is
-  ~ furnished to do so, subject to the following conditions:
-  ~
-  ~ The above copyright notice and this permission notice shall be included in
-  ~ all copies or substantial portions of the Software.
-  ~
-  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-  ~ THE SOFTWARE.
-  -->
-
 <resources>
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
@@ -32,45 +7,43 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="MyInputField" parent="InputField">
+    <style name="SampleInputField" parent="InputField">
         <item name="android:layout_marginTop">14dp</item>
-        <item name="labelTextAppearance">@style/MyLabelTextAppearance</item>
-        <item name="errorTextAppearance">@style/MyErrorTextAppearance</item>
-        <item name="inputStyle">@style/MyInputField.InputStyle</item>
-        <item name="inputTextAppearance">@style/MyInputInputTextAppearance</item>
-
-        <item name="suffixImageStyle">@style/MyInputImageSuffixStyle</item>
+        <item name="labelTextAppearance">@style/SampleLabelTextAppearance</item>
+        <item name="inputTextAppearance">@style/SampleInputTextAppearance</item>
+        <item name="errorTextAppearance">@style/SampleErrorTextAppearance</item>
+        <item name="inputStyle">@style/SampleInputStyle</item>
+        <item name="labelStyle">@style/SampleLabelStyle</item>
+        <item name="errorStyle">@style/SampleErrorStyle</item>
+        <item name="suffixMenuStyle">@style/InputFieldSuffixMenuStyle</item>
+        <item name="suffixMenuItemStyle">@style/InputFieldSuffixMenuItemStyle</item>
     </style>
 
-    <style name="MyInputField.InputStyle">
+    <style name="SampleInputStyle">
         <item name="android:layout_marginTop">10dp</item>
         <item name="android:digits">0,1,2,3,4,5,6,7,8,9,.,\,</item>
         <item name="android:inputType">numberDecimal|textMultiLine</item>
-        <item name="android:background">@drawable/aif_edittext_states</item>
         <item name="android:ellipsize">end</item>
         <item name="android:singleLine">false</item>
     </style>
 
-    <style name="MyInputImageSuffixStyle">
-        <item name="android:layout_width">32dp</item>
-        <item name="android:layout_height">32dp</item>
-        <item name="android:padding">4dp</item>
-        <item name="android:clickable">true</item>
-        <item name="android:focusable">true</item>
-        <item name="android:background">@drawable/ripple_suffix</item>
-        <item name="android:layout_marginEnd">0dp</item>
-        <item name="elevation">1dp</item>
+    <style name="SampleLabelStyle">
+        <!--        Label styles -->
     </style>
 
-    <style name="MyInputInputTextAppearance">
+    <style name="SampleErrorStyle">
+        <!--        Error styles -->
+    </style>
+
+    <style name="SampleInputTextAppearance" parent="InputFieldInputTextAppearance">
         <item name="android:fontFamily">@font/_inter_semi_bold</item>
     </style>
 
-    <style name="MyErrorTextAppearance" parent="InputField.ErrorTextAppearance">
+    <style name="SampleErrorTextAppearance" parent="InputFieldErrorTextAppearance">
         <item name="android:fontFamily">@font/_inter_semi_bold</item>
     </style>
 
-    <style name="MyLabelTextAppearance" parent="InputField.LabelTextAppearance">
+    <style name="SampleLabelTextAppearance" parent="InputFieldLabelTextAppearance">
         <item name="android:fontFamily">@font/_inter_semi_bold</item>
 
     </style>
@@ -89,18 +62,7 @@
         <item name="android:focusable">false</item>
     </style>
 
+    <style name="SampleSuffixItemStyle" parent="InputFieldSuffixMenuItemStyle">
 
-    <style name="SamplePreSuffixStyle" parent="AppTheme">
-        <item name="suffixTextAppearance">@style/SamplePreSuffixAppearance</item>
     </style>
-
-    <style name="SamplePreSuffixAppearance" parent="TextAppearance.AppCompat">
-        <item name="android:fontFamily">@font/_inter_semi_bold</item>
-        <item name="android:textSize">14dp</item>
-        <item name="android:textColor">@android:color/black</item>
-        <item name="android:clickable">false</item>
-        <item name="android:focusable">false</item>
-    </style>
-
-
 </resources>

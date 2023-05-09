@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright (C) by Eduard Maximovich. 2020
+  ~ Copyright (C) by Eduard Maximovich. 2022
   ~ @link <a href="https://github.com/edwardstock">Profile</a>
   ~
   ~ The MIT License
@@ -24,7 +24,6 @@
   -->
 
 <resources>
-
     <declare-styleable name="IF_EditText">
         <attr name="android:digits" />
         <attr name="android:inputType" />
@@ -45,33 +44,18 @@
         <attr name="android:autofillHints" />
         <attr name="android:textAllCaps" />
         <attr name="android:nextFocusDown" />
+        <attr name="android:focusable" />
+        <attr name="android:focusableInTouchMode" />
 
         <attr name="android:maxLines" />
         <attr name="android:singleLine" />
 
-        <attr name="suffixType" format="enum">
-            <enum name="none" value="-1" />
-            <enum name="text" value="0" />
-            <enum name="image" value="1" />
-            <enum name="text_and_presuffix" value="2" />
-            <enum name="image_and_presuffix" value="3" />
-            <enum name="presuffix" value="4" />
-        </attr>
-        <attr name="suffixImageStyle" format="reference" />
-        <attr name="suffixImageSrc" format="reference" />
-        <attr name="suffixImageWidth" format="dimension" />
-        <attr name="suffixImageHeight" format="dimension" />
-        <attr name="suffixImagePadding" format="dimension" />
-        <attr name="suffixImageMargin" format="dimension" />
-        <attr name="suffixImageTint" format="color" />
+        <attr name="suffixMenu" format="reference" />
+        <attr name="suffixMenuStyle" format="reference" />
+        <attr name="suffixMenuItemStyle" format="reference" />
+        <attr name="suffixMenuMoreIcon" format="reference" />
 
-        <attr name="suffixText" format="string|reference" />
-        <attr name="suffixTextStyle" format="reference" />
-        <attr name="suffixTextAppearance" format="reference" />
-
-        <attr name="presuffixText" format="string|reference" />
-        <attr name="presuffixTextStyle" format="reference" />
-        <attr name="presuffixTextAppearance" format="reference" />
+        <attr name="overlayStyle" format="reference" />
 
         <attr name="label" format="string" />
         <attr name="labelEnabled" format="boolean" />
@@ -90,6 +74,13 @@
         <attr name="inputMinHeight" format="dimension" />
         <attr name="inputBackground" format="reference" />
         <attr name="inputDisableSuggestions" format="boolean" />
+
+        <attr name="passwordVisible" format="boolean|reference" />
+
+        <attr name="inputMask" format="string|reference" />
+        <attr name="inputMaskChar" format="string|reference" />
+        <attr name="inputMaskStablePlaceholders" format="boolean|reference" />
+        <attr name="inputMaskStablePlaceholderChar" format="string|reference" />
 
     </declare-styleable>
 

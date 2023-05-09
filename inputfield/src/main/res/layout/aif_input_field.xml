@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright (C) by Eduard Maximovich. 2020
+  ~ Copyright (C) by Eduard Maximovich. 2022
   ~ @link <a href="https://github.com/edwardstock">Profile</a>
   ~
   ~ The MIT License
@@ -25,14 +25,14 @@
 
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:parentTag="android.widget.FrameLayout">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/aif_root_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        tools:background="@android:color/white">
+        android:orientation="vertical">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/aif_label"
@@ -51,47 +51,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/aif_label" />
 
-        <FrameLayout
-            android:id="@+id/aif_input_suffix_wrapper"
+        <LinearLayout
+            android:id="@+id/aif_input_suffix_root"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="@id/aif_input"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/aif_input">
+            app:layout_constraintTop_toTopOf="@id/aif_input" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/aif_input_presuffix_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingEnd="8dp"
-                    android:visibility="gone" />
-
-                <FrameLayout
-                    android:id="@+id/aif_input_suffix_layout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:id="@+id/aif_input_suffix_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone" />
-
-                    <ImageView
-                        android:id="@+id/aif_input_suffix_image"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:contentDescription=" "
-                        android:visibility="gone" />
-                </FrameLayout>
-
-            </LinearLayout>
-        </FrameLayout>
 
         <ViewStub
             android:id="@+id/aif_input_overlay"

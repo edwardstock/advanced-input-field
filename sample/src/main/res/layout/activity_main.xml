@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
-  ~ Copyright (C) by Eduard Maximovich. 2020
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (C) by Eduard Maximovich. 2022
   ~ @link <a href="https://github.com/edwardstock">Profile</a>
   ~
   ~ The MIT License
@@ -46,139 +45,116 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/hello"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/aif_grey"
-                android:fontFamily="@font/ubuntu_mono_bold"
-                android:text="Hello World!"
-                android:textAlignment="center"
-                android:textSize="32sp"
-                android:visibility="gone"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
             <com.edwardstock.inputfield.InputField
-                android:id="@+id/input_email"
-                style="@style/MyInputField"
+                android:id="@+id/input_decimal"
+                style="@style/SampleInputField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                android:hint="Email"
-                android:inputType="textNoSuggestions"
-                app:fieldName="email"
-                app:label="Email" />
-
-            <com.edwardstock.inputfield.InputFieldAutocomplete
-                android:id="@+id/input_name"
-                style="@style/MyInputField"
-                android:enabled="false"
-                android:text="Wow"
+                android:digits="01234567890.,-"
+                android:hint="Enter decimal number"
+                android:inputType="numberDecimal"
                 android:textColor="@color/text_color_stateful"
+                app:fieldName="decimal"
+                app:label="Decimal input filter" />
+
+            <!--            <com.edwardstock.inputfield.InputField-->
+            <!--                android:id="@+id/input_with_suffix"-->
+            <!--                style="@style/SampleInputField"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_marginStart="16dp"-->
+            <!--                android:layout_marginTop="16dp"-->
+            <!--                android:layout_marginEnd="16dp"-->
+            <!--                android:hint="Password"-->
+            <!--                android:inputType="textPassword|textMultiLine"-->
+            <!--                android:text="very secret password which takes few lines and suffix must be at the vertical center"-->
+            <!--                android:textColor="@color/text_color_stateful"-->
+            <!--                app:fieldName="password_repeat"-->
+            <!--                app:label="Multiline password with suffix"-->
+            <!--                app:passwordVisible="false"-->
+            <!--                app:suffixMenu="@menu/menu_my"-->
+            <!--                app:suffixMenuItemStyle="@style/InputFieldSuffixMenuItemStyle" />-->
+
+            <!--            <com.edwardstock.inputfield.InputField-->
+            <!--                android:id="@+id/input_single_password"-->
+            <!--                style="@style/SampleInputField"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_marginStart="16dp"-->
+            <!--                android:layout_marginTop="16dp"-->
+            <!--                android:layout_marginEnd="16dp"-->
+            <!--                android:hint="Password"-->
+            <!--                android:inputType="textPassword"-->
+            <!--                android:text="Visible password"-->
+            <!--                android:textColor="@color/text_color_stateful"-->
+            <!--                app:fieldName="password_repeat"-->
+            <!--                app:label="Standard password"-->
+            <!--                app:passwordVisible="true"-->
+            <!--                app:suffixMenu="@menu/menu_my" />-->
+
+            <!--            <com.edwardstock.inputfield.InputField-->
+            <!--                android:id="@+id/input_text_pass"-->
+            <!--                style="@style/SampleInputField"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_marginStart="16dp"-->
+            <!--                android:layout_marginTop="16dp"-->
+            <!--                android:layout_marginEnd="16dp"-->
+            <!--                android:hint="Enter any text"-->
+            <!--                android:inputType="text"-->
+            <!--                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec euismod, nisl eget"-->
+            <!--                android:textColor="@color/text_color_stateful"-->
+            <!--                app:fieldName="password_repeat"-->
+            <!--                app:label="Single line text" />-->
+
+            <com.edwardstock.inputfield.InputField
+                android:id="@+id/input_credit_card"
+                style="@style/SampleInputField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                android:visibility="gone"
-                android:hint="Start type"
-                android:inputType="textPersonName"
-                app:fieldName="name"
-                app:label="Type some name" />
-
-            <com.edwardstock.inputfield.InputField
-                android:id="@+id/input_password"
-                style="@style/MyInputField"
-                android:visibility="gone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:hint="Password"
-                android:inputType="textPassword"
-                app:fieldName="password"
-                app:label="Type your password"
-                tools:text="agagag" />
-
-
-            <com.edwardstock.inputfield.InputField
-                android:id="@+id/input_password_repeat"
-                style="@style/MyInputField"
-                android:enabled="false"
-                android:text="atat"
+                android:digits="01234567890 "
+                android:hint="Enter credit card number"
+                android:inputType="text"
+                android:text="1111222233334444"
                 android:textColor="@color/text_color_stateful"
-                android:visibility="gone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:hint="Password"
-                android:inputType="textPassword"
-                app:fieldName="password_repeat"
-                app:inputOverlay="@layout/test_overlay"
-                app:inputOverlayVisible="false"
-                app:label="Repeat your password"
-                app:suffixImageSrc="@drawable/ic_cancel_grey"
-                app:suffixType="image" />
+                app:fieldName="card_number"
+                app:inputMask="#### #### #### ####"
+                app:label="Credit Card (masked)" />
 
             <com.edwardstock.inputfield.InputField
-                android:id="@+id/input_message"
-                style="@style/MyInputField"
+                android:id="@+id/value_multiline"
+                style="@style/SampleInputField"
+                android:inputType="text|textMultiLine|textAutoCorrect|textCapSentences"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                android:hint="Type some decimal value"
-                android:inputType="numberDecimal|textMultiLine"
-                app:fieldName="message"
-                app:label="Amount"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/hello" />
+                android:text="Every deep thinker is more afraid of being understood than of being misunderstood."
+                app:fieldName="entropy"
+                app:inputDisableSuggestions="true"
+                app:label="Text|Multiline|Auto correct|Cap sentences"
+                app:suffixMenu="@menu/menu_my" />
 
-            <Button
-                android:id="@+id/action_submit"
+            <com.edwardstock.inputfield.InputField
+                android:id="@+id/value_multiline_password"
+                style="@style/SampleInputField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                android:enabled="false"
-                android:text="Send" />
+                android:inputType="textPassword|textMultiLine|textAutoCorrect|textCapSentences"
+                android:text="Every deep thinker is more afraid of being understood than of being misunderstood."
+                app:fieldName="entropy"
+                app:label="TextPassword|Multiline" />
 
-            <Button
-                android:id="@+id/action_extras_empty"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:text="Start no extras" />
-
-            <Button
-                android:id="@+id/action_extras_filled"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:text="Start with extras" />
-
-            <Button
-                android:id="@+id/action_network_validator"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:text="Input with delayed validator" />
         </LinearLayout>
     </ScrollView>
 

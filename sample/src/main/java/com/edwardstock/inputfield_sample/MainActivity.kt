@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by Eduard Maximovich. 2020
+ * Copyright (C) by Eduard Maximovich. 2022
  * @link <a href="https://github.com/edwardstock">Profile</a>
  *
  * The MIT License
@@ -25,116 +25,100 @@
 
 package com.edwardstock.inputfield_sample
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.widget.ArrayAdapter
-import android.widget.Button
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.edwardstock.inputfield.InputField
-import com.edwardstock.inputfield.InputFieldAutocomplete
 import com.edwardstock.inputfield.form.DecimalInputFilter
-import com.edwardstock.inputfield.form.InputGroup
-import com.edwardstock.inputfield.form.validators.CompareValidator
-import com.edwardstock.inputfield.form.validators.EmailValidator
-import com.edwardstock.inputfield.form.validators.LengthValidator
+import com.edwardstock.inputfield.menu.InputMenuItem
+import com.edwardstock.inputfield_sample.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
-    val values: HashMap<String, String> = HashMap()
+    private val binding by lazy {
+        ActivityMainBinding.inflate(layoutInflater)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(binding.root)
 
-        val inputGroup = InputGroup()
+        binding.apply {
+            inputDecimal.input.keyListener = DecimalInputFilter(decimals = 4)
 
-        val email: InputField = findViewById(R.id.input_email)
-        val name: InputFieldAutocomplete = findViewById(R.id.input_name)
-        val password: InputField = findViewById(R.id.input_password)
-        val passwordRepeat: InputField = findViewById(R.id.input_password_repeat)
-        val amount: InputField = findViewById(R.id.input_message)
-        val actionSubmit: Button = findViewById(R.id.action_submit)
-        val actionNoExtras: Button = findViewById(R.id.action_extras_empty)
-        val actionWithExtras: Button = findViewById(R.id.action_extras_filled)
-        val actionNetworkValidator: Button = findViewById(R.id.action_network_validator)
+            valueMultilinePassword.setSuffixMenu(listOf(
+                InputMenuItem(
+                    itemId = 100,
+                    title = "Toggle password visibility",
+                    isEnabled = true,
+                    iconRes = R.drawable.ic_visible,
+                    onMenuItemClickListener = { menuRoot, item ->
+                        valueMultilinePassword.togglePasswordVisibility()
+                        menuRoot.notifyItemChanged(
+                            item.copy(
+                                iconRes = if (valueMultilinePassword.isPasswordVisible) R.drawable.ic_visible else R.drawable.ic_visible_off
+                            )
+                        )
+                    }
+                )
+            ))
 
-        actionNetworkValidator.setOnClickListener {
-            startActivity(Intent(this, NetworkValidatorActivity::class.java))
+            inputCreditCard.setSuffixMenu(listOf(
+                InputMenuItem(
+                    itemId = 100,
+                    title = "Toggle card visibility",
+                    isEnabled = true,
+                    iconRes = R.drawable.ic_visible,
+                    onMenuItemClickListener = { menuRoot, item ->
+                        inputCreditCard.togglePasswordVisibility()
+                        menuRoot.notifyItemChanged(
+                            item.copy(
+                                iconRes = if (inputCreditCard.isPasswordVisible) R.drawable.ic_visible else R.drawable.ic_visible_off
+                            )
+                        )
+                    }
+                ),
+                InputMenuItem(
+                    itemId = R.id.menu_message,
+                    showAsAction = MenuItem.SHOW_AS_ACTION_IF_ROOM, // ifroom hardcoded to 3 items
+                    title = "Action with black tint ",
+                    iconRes = R.drawable.ic_message_grey,
+                    iconTintColorRes = android.R.color.black,
+                    onMenuItemClickListener = { _, _ ->
+                        Toast.makeText(this@MainActivity, "Action 1", Toast.LENGTH_SHORT).show()
+                    }
+                ),
+                InputMenuItem(
+                    itemId = 101,
+                    title = "Disabled item",
+                    isEnabled = false,
+                    iconRes = R.drawable.ic_cancel_grey,
+                    iconTintColorRes = R.color.aif_grey,
+                    onMenuItemClickListener = { _, _ ->
+                        Toast.makeText(this@MainActivity, "Disabled item", Toast.LENGTH_SHORT).show()
+                    }
+                ),
+                InputMenuItem(
+                    itemId = R.id.menu_clear,
+                    showAsAction = MenuItem.SHOW_AS_ACTION_NEVER,
+                    iconRes = R.drawable.ic_cancel_grey,
+                    title = "Action 2 (never shown)",
+                    onMenuItemClickListener = { _, _ ->
+                        Toast.makeText(this@MainActivity, "Action 2", Toast.LENGTH_SHORT).show()
+                    }
+                )
+            ))
         }
 
-        actionNoExtras.setOnClickListener {
-            startActivity(Intent(this, ExtrasActivity::class.java))
-        }
-        actionWithExtras.setOnClickListener {
-            val intent = Intent(this, ExtrasActivity::class.java)
-            intent.putExtra("email", "abc@def.com")
-            intent.putExtra("value", "10")
-            startActivity(intent)
-        }
-
-        val intent = Intent(this, ExtrasActivity::class.java)
-        intent.putExtra("email", "abc@def.com")
-        intent.putExtra("value", "10")
-        startActivity(intent)
-
-        inputGroup.setup {
-            add(name)
-            add(email, EmailValidator())
-            add(password, LengthValidator(4).apply { errorMessage = "Password length should be from 4 symbols" })
-            add(passwordRepeat, CompareValidator(password).apply { errorMessage = "Passwords must be equals" })
-            add(amount)
-        }
-        inputGroup.addFilter(amount, DecimalInputFilter(amount))
-
-        val nameAdapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1)
-        nameAdapter.addAll(
-            "Jahn",
-            "Jane",
-            "Jaseph",
-            "Jamal",
-            "Jakie",
-            "James",
-            "Jessica",
-            "Smith",
-            "Kara",
-            "Sam",
-            "Vasya"
-        )
-        nameAdapter.notifyDataSetChanged()
-        name.input.setAdapter(nameAdapter)
+    }
 
 
-        inputGroup.addValidateRelation(passwordRepeat, password)
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        return super.onCreateOptionsMenu(menu)
+    }
 
-        inputGroup.addFormValidateListener {
-            actionSubmit.isEnabled = it
-            Log.d("Form", "Form is valid: $it")
-        }
-        inputGroup.addTextChangedListener { input, valid ->
-//            Log.d("Form","Field ${input.fieldName} is valid: $valid")
-            if (valid) {
-                values[input.fieldName!!] = input.text!!.toString()
-            }
-//            Log.d("Form", values.toString())
-        }
-
-        amount.setOnSuffixImageClickListener {
-            if (!amount.text.isNullOrEmpty()) {
-                amount.text = null
-                return@setOnSuffixImageClickListener
-            }
-            amount.inputOverlayVisible = true
-
-            amount.input.clearFocus()
-            amount.textAllCaps
-        }
-
-        amount.inputOverlay?.setOnClickListener {
-            amount.inputOverlayVisible = false
-            amount.input.requestFocus()
-        }
-
-
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return super.onOptionsItemSelected(item)
     }
 }

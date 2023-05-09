@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) by Eduard Maximovich. 2020
+  ~ Copyright (C) by Eduard Maximovich. 2022
   ~ @link <a href="https://github.com/edwardstock">Profile</a>
   ~
   ~ The MIT License
@@ -24,8 +24,7 @@
   ~ THE SOFTWARE.
   -->
 
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.edwardstock.inputfield_sample">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application
         android:allowBackup="true"
@@ -43,13 +42,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".TestActivity">
-
-        </activity>
-        <activity android:name=".ExtrasActivity" />
-
-        <activity android:name=".NetworkValidatorActivity" />
 
         <meta-data
             android:name="preloaded_fonts"
